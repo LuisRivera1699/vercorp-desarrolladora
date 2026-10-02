@@ -1,0 +1,190 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --accent: #c4a484;
+  --accent-hover: #b3916f;
+  --accent-soft: #e8dccb;
+  --earth: #8a6a4f;
+  --stone: #f6f4f0;
+  --ink: #141414;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-earth: var(--earth);
+  --color-stone: var(--stone);
+  --color-ink: var(--ink);
+  --font-sans: var(--font-montserrat);
+  --font-serif: var(--font-cormorant);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-montserrat), system-ui, sans-serif;
+}
+
+.font-serif {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-in {
+  animation: hero-in 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-plane {
+  transform: perspective(1100px) rotateX(58deg);
+  transform-origin: 50% 100%;
+  mask-image: linear-gradient(
+    to top,
+    black 35%,
+    rgba(0, 0, 0, 0.6) 70%,
+    transparent
+  );
+}
+
+@media (max-width: 639px) {
+  .hero-plane {
+    transform: perspective(600px) rotateX(48deg);
+  }
+}
+
+/* Plano de lotización del hero: los trazos usan pathLength="1" */
+@keyframes lot-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.lot-stroke {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: lot-draw 2.4s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+@keyframes lot-glow {
+  0%,
+  100% {
+    fill-opacity: 0;
+  }
+  45%,
+  60% {
+    fill-opacity: 0.32;
+  }
+}
+
+.lot-glow {
+  fill-opacity: 0;
+  animation: lot-glow 6s ease-in-out infinite;
+}
+
+@keyframes lot-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.lot-fade {
+  opacity: 0;
+  animation: lot-fade 1.2s ease-out forwards;
+}
+
+@keyframes status-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 70%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 8px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.animate-status {
+  animation: status-pulse 2s ease-out infinite;
+}
+
+@keyframes chevron-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 1;
+  }
+}
+
+.animate-chevron {
+  animation: chevron-bounce 1.8s ease-in-out infinite;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lot-stroke {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .lot-glow,
+  .animate-status,
+  .animate-chevron {
+    animation: none;
+  }
+
+  .lot-fade {
+    animation: none;
+    opacity: 1;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
