@@ -19,8 +19,8 @@ export default function SoldProjects() {
               id="sold-heading"
               align="left"
               eyebrow="Proyectos entregados"
-              title="Lotes que hoy ya son hogares"
-              description="Cada uno de estos proyectos se vendió por completo. Hoy son barrios donde cientos de personas construyen su vida en Cusco."
+              title="Espacios que hoy ya son hogares"
+              description="Cada uno de estos condominios en Huaypo, en el Valle Sagrado, se vendió por completo. Hoy son patrimonio de familias e inversionistas que confiaron en Vercorp."
             />
           </Reveal>
 
@@ -28,7 +28,7 @@ export default function SoldProjects() {
             <dl className="flex shrink-0 gap-10 md:pb-2">
               <div>
                 <dt className="text-[10px] font-medium tracking-[0.22em] text-neutral-400 uppercase">
-                  Lotes vendidos
+                  Espacios vendidos
                 </dt>
                 <dd className="mt-1 font-serif text-4xl font-semibold text-accent">
                   {TOTAL_SOLD_LOTS}+
@@ -64,13 +64,13 @@ export default function SoldProjects() {
 
                   <figcaption className="absolute inset-x-0 bottom-0 p-6 sm:p-7">
                     <p className="text-[10px] font-medium tracking-[0.28em] text-white/70 uppercase">
-                      {project.district} · {project.year}
+                      {project.district}
                     </p>
                     <h3 className="mt-2 font-serif text-2xl leading-tight font-semibold tracking-wide text-white uppercase sm:text-[1.7rem]">
                       {project.name}
                     </h3>
                     <div className="mt-4 flex items-center gap-4 border-t border-white/20 pt-4 text-[11px] font-medium tracking-[0.16em] text-white/80 uppercase">
-                      <span>{project.totalLots} lotes</span>
+                      <span>{project.totalLots} espacios</span>
                       <span className="h-3 w-px bg-white/30" aria-hidden />
                       <span>{formatArea(project.areaM2)} m²</span>
                     </div>

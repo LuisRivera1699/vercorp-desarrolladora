@@ -86,7 +86,7 @@ export default function Header({ solid = false }: { solid?: boolean }) {
                 : "border-white/80 text-white hover:bg-white hover:text-foreground"
             }`}
           >
-            Quiero mi lote
+            Quiero mi espacio
           </Link>
         </nav>
 
@@ -141,7 +141,7 @@ export default function Header({ solid = false }: { solid?: boolean }) {
             onClick={() => setMenuOpen(false)}
             className="mt-2 bg-accent px-8 py-3.5 text-[11px] font-semibold tracking-[0.22em] text-white uppercase transition-colors hover:bg-accent-hover"
           >
-            Quiero mi lote
+            Quiero mi espacio
           </Link>
         </nav>
       </div>

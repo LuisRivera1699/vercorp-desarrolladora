@@ -19,28 +19,28 @@ const cormorant = Cormorant_Garamond({
 });
 
 const description =
-  "Vercorp Desarrolladora habilita y lotiza terrenos en Cusco. Ahora en venta: Killa, lotes con vista al lago en Huaypo, Valle Sagrado, a 30 minutos de Cusco.";
+  "Vercorp Desarrolladora habilita y lotiza terrenos en Cuzco. Ahora en venta: Killa, espacios con vista al lago en Huaypo, Valle Sagrado, a 30 minutos de Cuzco.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: "Vercorp Desarrolladora | Terrenos lotificados en Cusco",
+    default: "Vercorp Desarrolladora | Terrenos lotificados en Cuzco",
     template: "%s | Vercorp Desarrolladora",
   },
   description,
   keywords: [
     "Vercorp",
     "Vercorp Desarrolladora",
-    "terrenos Cusco",
-    "lotes Cusco",
-    "habilitación urbana Cusco",
-    "venta de lotes Cusco",
+    "terrenos Cuzco",
+    "lotes Cuzco",
+    "habilitación urbana Cuzco",
+    "venta de lotes Cuzco",
     "Killa",
     "lotes Huaypo",
     "terrenos Valle Sagrado",
     "lotes con vista al lago",
     "Fundo Lago",
-    "inversión inmobiliaria Cusco",
+    "inversión inmobiliaria Cuzco",
   ],
   authors: [{ name: "Vercorp" }],
   creator: "Vercorp",
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     locale: "es_PE",
     url: SITE.url,
     siteName: SITE.name,
-    title: "Vercorp Desarrolladora | Terrenos lotificados en Cusco",
+    title: "Vercorp Desarrolladora | Terrenos lotificados en Cuzco",
     description,
     images: [
       {
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Vercorp Desarrolladora | Terrenos lotificados en Cusco",
+    title: "Vercorp Desarrolladora | Terrenos lotificados en Cuzco",
     description,
   },
   robots: {
@@ -100,10 +100,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     telephone: SITE.phone,
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Cusco",
+      addressLocality: "Cuzco",
       addressCountry: "PE",
     },
-    description: "Habilitaciones urbanas y venta de terrenos lotificados en Cusco.",
+    description: "Habilitaciones urbanas y venta de terrenos lotificados en Cuzco.",
   };
 
   return (

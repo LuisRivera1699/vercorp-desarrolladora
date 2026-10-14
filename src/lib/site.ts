@@ -4,6 +4,8 @@ export const SITE = {
   parentUrl: "https://vercorp.com",
   wegrowUrl: "https://wegrow.pe",
   email: "contacto@vercorpperu.com",
+  bookingUrl:
+    "https://calendar.google.com/appointments/schedules/AcZssZ2dAMV_EP_1eV1RY-yFLYonYK6Mx4xxxleKsLmItk2YDwZzpUA9_zd3pn8BWyQG0y4fteFGB888",
   phone: "+51957329602",
   phoneLabel: "+51 957 329 602",
   whatsapp: "51957329602",

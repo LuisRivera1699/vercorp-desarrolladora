@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import Availability from "@/components/Availability";
 import ImageLightbox from "@/components/ImageLightbox";
 import LandIcon from "@/components/LandIcon";
 import ParallaxImage from "@/components/ParallaxImage";
@@ -8,7 +9,12 @@ import Reveal from "@/components/Reveal";
 import SectionHeading from "@/components/SectionHeading";
 import StatusBadge from "@/components/StatusBadge";
 import {
+  financingExample,
+  formatUsd,
+  getAvailability,
+  getFinancing,
   getOtherActiveProjects,
+  getProjectStatus,
   type ActiveProject,
   type LandIconId,
 } from "@/lib/projects";
@@ -21,6 +27,8 @@ export default function ProjectDetailView({
   project: ActiveProject;
 }) {
   const others = getOtherActiveProjects(project.slug);
+  const financing = getFinancing(project);
+  const availability = getAvailability(project);
   const { manifesto, overview, location, lotPlan, attractions, backing } =
     project;
 
@@ -59,7 +67,7 @@ export default function ProjectDetailView({
           </nav>
 
           <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
-            <StatusBadge status={project.status} tone="dark" />
+            <StatusBadge status={getProjectStatus(project)} tone="dark" />
             <p className="text-[11px] font-medium tracking-[0.28em] text-white/80 uppercase">
               {project.place}
             </p>
@@ -81,7 +89,15 @@ export default function ProjectDetailView({
           </h1>
 
           <p className="mt-6 max-w-xl text-sm leading-relaxed font-light text-white/85 sm:text-base">
-            {project.subtitle}
+            {project.subtitle} desde {project.area.from} m². Amplíalo a tu
+            medida, con precios especiales.
+          </p>
+          <p className="mt-4 text-[11px] font-semibold tracking-[0.2em] text-white/85 uppercase">
+            <span className="font-serif text-2xl tracking-normal text-accent normal-case sm:text-[1.7rem]">
+              Desde {formatUsd(financing.monthly)}/mes
+            </span>{" "}
+            · {financing.downPaymentPercent}% de inicial ·{" "}
+            {financing.installments} cuotas sin intereses
           </p>
 
           <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:gap-4">
@@ -138,13 +154,29 @@ export default function ProjectDetailView({
 
           <div className="lg:col-span-7">
             <ul className="grid grid-cols-2 gap-3 sm:gap-4">
-              {project.facts.map((fact, index) => (
+              {[
+                {
+                  prefix: "Desde",
+                  value: `${project.area.from} m²`,
+                  label: "Más metros con precio especial",
+                },
+                {
+                  value: String(availability.available),
+                  label: `Disponibles de ${availability.total} espacios`,
+                },
+                ...project.facts,
+              ].map((fact, index) => (
                 <li key={fact.label}>
                   <Reveal
                     delay={index * 90}
                     className="h-full rounded-2xl bg-stone px-4 py-7 sm:px-7 sm:py-9 lg:rounded-3xl"
                   >
                     <p className="font-serif text-[1.65rem] leading-none font-semibold tracking-wide whitespace-nowrap text-accent sm:text-[2.6rem]">
+                      {"prefix" in fact ? (
+                        <span className="mr-1.5 font-sans text-xs font-medium tracking-[0.2em] text-neutral-500 uppercase sm:text-sm">
+                          {fact.prefix}
+                        </span>
+                      ) : null}
                       {fact.value}
                     </p>
                     <p className="mt-3 text-[10px] font-medium tracking-[0.2em] text-neutral-500 uppercase sm:text-[11px]">
@@ -156,6 +188,9 @@ export default function ProjectDetailView({
             </ul>
             <p className="mt-5 text-[12px] leading-relaxed text-neutral-400">
               {overview.disclaimer}
+            </p>
+            <p className="mt-2 text-[12px] leading-relaxed text-neutral-400">
+              {financingExample(financing)}
             </p>
           </div>
         </div>
@@ -240,11 +275,11 @@ export default function ProjectDetailView({
             <SectionHeading
               align="left"
               eyebrow="Plano de lotización"
-              title={`${project.lots.areas.length} lotes, cada uno con su propia vista`}
+              title={`${project.lots.areas.length} espacios, cada uno con su propia vista`}
               description={lotPlan.description}
             />
             <p className="mt-9 text-[11px] font-semibold tracking-[0.24em] text-foreground uppercase">
-              Cada lote cuenta con
+              Cada espacio cuenta con
             </p>
             <ul className="mt-5 space-y-4">
               {lotPlan.features.map((feature) => (
@@ -267,11 +302,12 @@ export default function ProjectDetailView({
                 </li>
               ))}
             </ul>
+            <Availability project={project} className="mt-9 max-w-sm" />
             <a
               href="#comprar"
-              className="mt-10 inline-flex items-center justify-center bg-accent px-8 py-3.5 text-[11px] font-semibold tracking-[0.22em] text-white uppercase transition-colors hover:bg-accent-hover"
+              className="mt-6 inline-flex items-center justify-center bg-accent px-8 py-3.5 text-[11px] font-semibold tracking-[0.22em] text-white uppercase transition-colors hover:bg-accent-hover"
             >
-              Elegir mi lote
+              Elegir mi espacio
             </a>
           </Reveal>
 
@@ -477,7 +513,7 @@ export default function ProjectDetailView({
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
                     <div className="absolute top-5 left-5">
-                      <StatusBadge status={other.status} />
+                      <StatusBadge status={getProjectStatus(other)} />
                     </div>
                     <div className="absolute inset-x-0 bottom-0 p-6">
                       <p className="text-[10px] font-medium tracking-[0.28em] text-white/70 uppercase">

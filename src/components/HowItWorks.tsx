@@ -6,25 +6,25 @@ const STEPS: { title: string; description: string; illustration: ReactNode }[] =
   {
     title: "Elegimos el terreno",
     description:
-      "Identificamos grandes extensiones en zonas de Cusco con proyección real de crecimiento, conectividad y servicios.",
+      "Identificamos grandes extensiones en zonas de Cuzco con proyección real de crecimiento, conectividad y servicios.",
     illustration: <TerrainArt />,
   },
   {
     title: "Habilitamos",
     description:
-      "Saneamos la propiedad, trazamos vías y proyectamos agua, luz y desagüe. Hacemos el trabajo pesado por ti.",
+      "Saneamos cada terreno con un estudio jurídico y dejamos todos los papeles en regla. Al comprar, recibes tu boleta o factura.",
     illustration: <UrbanizeArt />,
   },
   {
     title: "Lotizamos",
     description:
-      "Dividimos el terreno en lotes independientes, con medidas claras, documentación en regla y precio transparente.",
+      "Dividimos el terreno en espacios independientes, con medidas claras, documentación en regla y precio transparente.",
     illustration: <LotsArt />,
   },
   {
-    title: "Tú construyes",
+    title: "Crece tu patrimonio",
     description:
-      "Eliges tu lote y lo haces tuyo: tu casa, tu negocio o tu inversión, en la tierra donde quieres echar raíces.",
+      "Invierte en zonas con mayor proyección en lugar de dejar tu dinero parado, expuesto a la inflación. A futuro, un inmueble que es patrimonio de por vida.",
     illustration: <HomeArt />,
   },
 ];
@@ -41,7 +41,7 @@ export default function HowItWorks() {
           <SectionHeading
             id="how-heading"
             eyebrow="Habilitación urbana"
-            title="De un gran terreno a tu propio lote"
+            title="De un gran terreno a tu propio espacio"
             description="En Vercorp Desarrolladora convertimos terrenos amplios en comunidades ordenadas y listas para crecer. Así funciona:"
           />
         </Reveal>

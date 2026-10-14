@@ -15,8 +15,8 @@ export default function Home() {
       <Header />
       <main>
         <Hero />
-        <HowItWorks />
         <Stats />
+        <HowItWorks />
         <ActiveProjects />
         <Benefits />
         <GrowBand />

@@ -1,9 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
+import Availability from "@/components/Availability";
 import Reveal from "@/components/Reveal";
 import SectionHeading from "@/components/SectionHeading";
 import StatusBadge from "@/components/StatusBadge";
-import { ACTIVE_PROJECTS } from "@/lib/projects";
+import {
+  ACTIVE_PROJECTS,
+  formatUsd,
+  getFinancing,
+  getProjectStatus,
+  type ActiveProject,
+} from "@/lib/projects";
+import { SITE } from "@/lib/site";
 
 export default function ActiveProjects() {
   const single = ACTIVE_PROJECTS.length === 1;
@@ -20,7 +28,7 @@ export default function ActiveProjects() {
             id="active-heading"
             eyebrow="En venta ahora"
             title={single ? "Proyecto en venta" : "Proyectos en venta"}
-            description="Lotes en los lugares que están definiendo el futuro de Cusco. Elige el tuyo antes de que se agoten."
+            description="Espacios en los lugares que están definiendo el futuro de Cuzco. Elige el tuyo antes de que se agoten."
           />
         </Reveal>
 
@@ -43,7 +51,7 @@ export default function ActiveProjects() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/10" />
                     <div className="absolute top-5 left-5 sm:top-6 sm:left-6">
-                      <StatusBadge status={project.status} />
+                      <StatusBadge status={getProjectStatus(project)} />
                     </div>
 
                     <div className="relative p-6 text-white sm:p-10 lg:p-12">
@@ -67,20 +75,37 @@ export default function ActiveProjects() {
                   </Link>
 
                   <div className="grid items-center gap-8 px-6 py-8 sm:px-10 sm:py-10 lg:grid-cols-12 lg:gap-10 lg:px-12">
-                    <p className="text-sm leading-relaxed font-light text-neutral-500 sm:leading-7 lg:col-span-5">
-                      {project.summary}
-                    </p>
+                    <div className="lg:col-span-5">
+                      <p className="text-sm leading-relaxed font-light text-neutral-500 sm:leading-7">
+                        {project.summary}
+                      </p>
+                      <FinancingLine project={project} />
+                      <Availability project={project} className="mt-4" />
+                    </div>
 
                     <dl className="grid grid-cols-3 border-y border-neutral-200 py-5 lg:col-span-4 lg:border-y-0 lg:py-0">
-                      {project.highlights.map((item, index) => (
+                      {[
+                        {
+                          prefix: "desde",
+                          value: `${project.area.from} m²`,
+                          label: "Por espacio",
+                        },
+                        { value: "+ m²", label: "Amplíalo a tu medida" },
+                        ...project.highlights,
+                      ].map((item, index) => (
                         <div
                           key={item.label}
-                          className={`flex flex-col-reverse text-center ${index > 0 ? "border-l border-neutral-200" : ""}`}
+                          className={`flex flex-col-reverse justify-end px-1 text-center ${index > 0 ? "border-l border-neutral-200" : ""}`}
                         >
                           <dt className="mt-1 text-[10px] font-medium tracking-[0.18em] text-neutral-400 uppercase">
                             {item.label}
                           </dt>
                           <dd className="font-serif text-xl font-semibold whitespace-nowrap text-foreground sm:text-2xl">
+                            {"prefix" in item ? (
+                              <span className="mr-1 font-sans text-[11px] font-light text-neutral-500">
+                                {item.prefix}
+                              </span>
+                            ) : null}
                             {item.value}
                           </dd>
                         </div>
@@ -94,12 +119,14 @@ export default function ActiveProjects() {
                       >
                         Ver proyecto
                       </Link>
-                      <Link
-                        href={`/${project.slug}#visita`}
+                      <a
+                        href={SITE.bookingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="inline-flex items-center justify-center border border-foreground/80 px-7 py-3.5 text-[11px] font-semibold tracking-[0.22em] text-foreground uppercase transition-colors hover:bg-foreground hover:text-white"
                       >
                         Agendar visita
-                      </Link>
+                      </a>
                     </div>
                   </div>
                 </article>
@@ -109,5 +136,18 @@ export default function ActiveProjects() {
         </ul>
       </div>
     </section>
+  );
+}
+
+function FinancingLine({ project }: { project: ActiveProject }) {
+  const financing = getFinancing(project);
+
+  return (
+    <p className="mt-4 text-[11px] font-semibold tracking-[0.16em] text-foreground uppercase">
+      <span className="font-serif text-lg tracking-normal text-accent normal-case">
+        Desde {formatUsd(financing.monthly)}/mes
+      </span>{" "}
+      · {financing.downPaymentPercent}% de inicial · sin intereses
+    </p>
   );
 }

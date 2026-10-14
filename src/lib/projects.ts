@@ -10,13 +10,12 @@ export type LandIconId =
   | "view"
   | "activity";
 
-export type ProjectStatus = "preventa" | "en-venta" | "ultimos-lotes";
+export type ProjectStatus = "preventa" | "en-venta" | "ultimos-espacios";
 
 export type SoldProject = {
   slug: string;
   name: string;
   district: string;
-  year: string;
   totalLots: number;
   areaM2: number;
   image: string;
@@ -35,9 +34,15 @@ export type ActiveProject = {
   summary: string;
   heroImage: string;
   imageAlt: string;
+  area: { from: number };
+  pricing: {
+    pricePerM2: number;
+    downPaymentPercent: number;
+    installments: number;
+  };
   highlights: { value: string; label: string }[];
   manifesto: { lead: string; quote: string[]; image: Photo };
-  lots: { areas: number[] };
+  lots: { areas: number[]; sold: number[] };
   facts: { value: string; label: string }[];
   overview: { title: string; description: string; disclaimer: string };
   location: {
@@ -68,6 +73,60 @@ export type ActiveProject = {
   contact: { blurb: string; image: Photo };
 };
 
+const LAST_SPACES_RATIO = 0.8;
+
+export function getAvailability(project: ActiveProject) {
+  const sold = new Set(project.lots.sold);
+  const spaces = project.lots.areas.map((area, index) => ({
+    number: index + 1,
+    area,
+    sold: sold.has(index + 1),
+  }));
+  const total = spaces.length;
+  const soldCount = spaces.filter((space) => space.sold).length;
+  return {
+    total,
+    sold: soldCount,
+    available: total - soldCount,
+    soldRatio: total > 0 ? soldCount / total : 0,
+    availableSpaces: spaces.filter((space) => !space.sold),
+  };
+}
+
+export function getProjectStatus(project: ActiveProject): ProjectStatus {
+  return getAvailability(project).soldRatio >= LAST_SPACES_RATIO
+    ? "ultimos-espacios"
+    : project.status;
+}
+
+export function formatUsd(amount: number) {
+  return `$${amount.toLocaleString("en-US")}`;
+}
+
+export function getFinancing(project: ActiveProject) {
+  const { pricePerM2, downPaymentPercent, installments } = project.pricing;
+  const area = project.area.from;
+  const total = area * pricePerM2;
+  const downPayment = Math.ceil((total * downPaymentPercent) / 100);
+  // Redondeo hacia arriba: el "desde" publicado nunca puede quedar por debajo de la cuota real.
+  const monthly = Math.ceil((total - downPayment) / installments);
+  return {
+    area,
+    pricePerM2,
+    downPaymentPercent,
+    installments,
+    total,
+    downPayment,
+    monthly,
+  };
+}
+
+export function financingExample(
+  financing: ReturnType<typeof getFinancing>,
+) {
+  return `Ejemplo: espacio de ${financing.area} m² a ${formatUsd(financing.pricePerM2)}/m² (${formatUsd(financing.total)}). Inicial de ${formatUsd(financing.downPayment)} y ${financing.installments} cuotas de ${formatUsd(financing.monthly)}, sin intereses.`;
+}
+
 export function unsplash(id: string, width = 1600) {
   return `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${width}&q=80`;
 }
@@ -75,7 +134,7 @@ export function unsplash(id: string, width = 1600) {
 export const STATUS_LABEL: Record<ProjectStatus, string> = {
   preventa: "Preventa",
   "en-venta": "En venta",
-  "ultimos-lotes": "Últimos lotes",
+  "ultimos-espacios": "Últimos espacios",
 };
 
 const KILLA_LOT_AREAS = [
@@ -88,21 +147,19 @@ export const ACTIVE_PROJECTS: ActiveProject[] = [
     slug: "killa",
     name: "Killa",
     status: "en-venta",
-    place: "Huaypo · Valle Sagrado del Cusco",
+    place: "Huaypo · Valle Sagrado del Cuzco",
     tagline: "Tu lugar en el Valle Sagrado",
-    subtitle: "Lotes con vista al lago, junto a Fundo Lago",
+    subtitle: "Espacios con vista al lago",
     summary:
-      "Un condominio de 29 lotes con vista al lago y al valle en Huaypo, a 30 minutos de Cusco. Para casa de campo, segunda vivienda o inversión de largo plazo.",
+      "Un condominio de 29 espacios con vista al lago y al valle en Huaypo, a 30 minutos de Cuzco. Para casa de campo, segunda vivienda o inversión de largo plazo.",
     heroImage: "/projects/killa/hero.jpg",
     imageAlt:
       "Casa de campo iluminada al atardecer frente al lago, en el entorno de Fundo Lago",
-    highlights: [
-      { value: "29", label: "Lotes" },
-      { value: "200–400", label: "m² por lote" },
-      { value: "30 min", label: "De Cusco" },
-    ],
+    area: { from: 200 },
+    pricing: { pricePerM2: 60, downPaymentPercent: 10, installments: 12 },
+    highlights: [{ value: "30 min", label: "De Cuzco" }],
     manifesto: {
-      lead: "Killa es el lugar donde el valle se detiene. Un sitio propio, silencioso y con vista, a 30 minutos de Cusco.",
+      lead: "Killa es el lugar donde el valle se detiene. Un sitio propio, silencioso y con vista, a 30 minutos de Cuzco.",
       quote: [
         "Hay lugares que se visitan. Y hay lugares que uno elige para quedarse.",
         "En Huaypo, el lago refleja el cielo y el valle baja el ritmo. Killa nace ahí: 29 lugares, cada uno con su propia vista, para construir algo propio en el Valle Sagrado.",
@@ -112,15 +169,14 @@ export const ACTIVE_PROJECTS: ActiveProject[] = [
         alt: "Valle Sagrado bajo un cielo de nubes, con montañas al fondo",
       },
     },
-    lots: { areas: KILLA_LOT_AREAS },
+    // Provisional: números de espacio vendidos de ejemplo, hasta tener los reales.
+    lots: { areas: KILLA_LOT_AREAS, sold: [3, 7] },
     facts: [
-      { value: "29", label: "Lotes disponibles" },
-      { value: "200–400 m²", label: "Rango de área por lote" },
       { value: "≈ 0.76 ha", label: "Área total del condominio" },
       { value: "1", label: "Vía de acceso interna" },
     ],
     overview: {
-      title: "Un condominio de lotes con vista al lago y al valle",
+      title: "Un condominio de espacios con vista al lago y al valle",
       description:
         "Un terreno habilitado para uso residencial, pensado para casa de campo, segunda vivienda o inversión de largo plazo — en la misma zona que Fundo Lago.",
       disclaimer:
@@ -133,7 +189,7 @@ export const ACTIVE_PROJECTS: ActiveProject[] = [
           value: "Huaypo",
           label: "Distrito de Chinchero, Valle Sagrado de los Incas",
         },
-        { value: "30 min", label: "De la ciudad del Cusco" },
+        { value: "30 min", label: "De la ciudad del Cuzco" },
         { value: "10 min", label: "Del aeropuerto internacional de Chinchero" },
         {
           value: "Al costado de Fundo Lago",
@@ -167,9 +223,9 @@ export const ACTIVE_PROJECTS: ActiveProject[] = [
       image: "/projects/killa/plano.png",
       width: 1512,
       height: 2144,
-      alt: "Plano de lotización de Killa con 29 lotes numerados y sus áreas en m²",
+      alt: "Plano de lotización de Killa con 29 espacios numerados y sus áreas en m²",
       description:
-        "29 lotes, numerados y delimitados por levantamiento topográfico, con vía de acceso central.",
+        "29 espacios, numerados y delimitados por levantamiento topográfico, con vía de acceso central.",
       features: [
         "Área y perímetro individual certificados",
         "Deslinde topográfico preciso (coordenadas y linderos)",
@@ -182,9 +238,9 @@ export const ACTIVE_PROJECTS: ActiveProject[] = [
       items: [
         {
           icon: "trend",
-          title: "Plusvalía en alza",
+          title: "Zona con mayor proyección",
           description:
-            "La construcción del Aeropuerto Internacional de Chinchero impulsa la valorización de suelo en toda la zona.",
+            "El Aeropuerto Internacional de Chinchero, en construcción a 10 minutos, impulsa el desarrollo de toda la zona.",
         },
         {
           icon: "view",
@@ -196,7 +252,7 @@ export const ACTIVE_PROJECTS: ActiveProject[] = [
           icon: "road",
           title: "Acceso vehicular",
           description:
-            "Vía de acceso directa a todos los lotes del condominio.",
+            "Vía de acceso directa a todos los espacios del condominio.",
         },
         {
           icon: "activity",
@@ -210,13 +266,13 @@ export const ACTIVE_PROJECTS: ActiveProject[] = [
       title: "Un proyecto respaldado por un ecosistema real",
       about: [
         "Vercorp es un holding inmobiliario peruano que identifica terrenos con potencial y los convierte en proyectos y activos inmobiliarios reales — desde la adquisición hasta la operación.",
-        "Vercorp tiene más de 8 años de trayectoria en Cusco y Killa es nuestro proyecto más reciente.",
+        "Vercorp tiene más de 8 años de trayectoria en Cuzco y Killa es nuestro proyecto más reciente.",
       ],
       pillars: [
         {
           title: "8 años",
           description:
-            "De trayectoria construyendo valor inmobiliario en Cusco.",
+            "De trayectoria construyendo valor inmobiliario en Cuzco.",
         },
         {
           title: "WeGrow",
@@ -227,7 +283,7 @@ export const ACTIVE_PROJECTS: ActiveProject[] = [
         {
           title: "Procesos claros",
           description:
-            "Cada lote con documentación y deslinde topográfico verificable.",
+            "Cada espacio con documentación y deslinde topográfico verificable.",
         },
       ],
       images: [
@@ -248,10 +304,10 @@ export const ACTIVE_PROJECTS: ActiveProject[] = [
     purchaseSteps: [
       {
         title: "Agenda tu cita",
-        description: "Selecciona tu lote según tus necesidades y presupuesto.",
+        description: "Selecciona tu espacio según tus necesidades y presupuesto.",
       },
       {
-        title: "Separa tu lote",
+        title: "Separa tu espacio",
         description: "Pago íntegro del predio y toma de posesión.",
       },
       {
@@ -270,67 +326,51 @@ export const ACTIVE_PROJECTS: ActiveProject[] = [
   },
 ];
 
-// Contenido provisional: nombres, cifras e imágenes se reemplazan con la información real de cada proyecto entregado.
 export const SOLD_PROJECTS: SoldProject[] = [
   {
-    slug: "los-andenes-de-saylla",
-    name: "Los Andenes de Saylla",
-    district: "Saylla",
-    year: "2019",
-    totalLots: 28,
-    areaM2: 5600,
-    image: unsplash("1500382017468-9049fed747ef", 1000),
-    imageAlt: "Campo de cultivo al amanecer",
-  },
-  {
-    slug: "praderas-de-san-jeronimo",
-    name: "Praderas de San Jerónimo",
-    district: "San Jerónimo",
-    year: "2020",
-    totalLots: 34,
-    areaM2: 6500,
-    image: unsplash("1500534314209-a25ddb2bd429", 1000),
-    imageAlt: "Cadenas de montañas entre la neblina",
-  },
-  {
-    slug: "mirador-de-poroy",
-    name: "Mirador de Poroy",
-    district: "Poroy",
-    year: "2021",
-    totalLots: 22,
-    areaM2: 4300,
-    image: unsplash("1506905925346-21bda4d32df4", 1000),
-    imageAlt: "Cumbres andinas sobre un mar de nubes",
-  },
-  {
-    slug: "villa-oropesa",
-    name: "Villa Oropesa",
-    district: "Oropesa",
-    year: "2022",
-    totalLots: 40,
-    areaM2: 7600,
-    image: unsplash("1500964757637-c85e8a162699", 1000),
-    imageAlt: "Montañas al atardecer en tonos cálidos",
-  },
-  {
-    slug: "campina-de-lucre",
-    name: "Campiña de Lucre",
-    district: "Lucre",
-    year: "2023",
+    slug: "raiz",
+    name: "Raíz Condominio",
+    district: "Huaypo · Valle Sagrado",
     totalLots: 30,
-    areaM2: 5700,
-    image: unsplash("1465146344425-f00d5f5c8f07", 1000),
-    imageAlt: "Campo con flores silvestres",
+    areaM2: 7107,
+    image: "/projects/entregados/raiz.jpg",
+    imageAlt: "Campos de cultivo en Huaypo con montañas y cielo nublado al fondo",
   },
   {
-    slug: "terrazas-de-urubamba",
-    name: "Terrazas de Urubamba",
-    district: "Urubamba",
-    year: "2025",
-    totalLots: 36,
-    areaM2: 6300,
-    image: unsplash("1475113548554-5a36f1f523d6", 1000),
-    imageAlt: "Pastizal iluminado por el sol del atardecer",
+    slug: "fundo-lago",
+    name: "Fundo Lago",
+    district: "Huaypo · Valle Sagrado",
+    totalLots: 16,
+    areaM2: 4667,
+    image: "/projects/entregados/fundo-lago.jpg",
+    imageAlt: "Vista a la laguna de Huaypo entre árboles y montañas",
+  },
+  {
+    slug: "finca-san-jose",
+    name: "Finca San José",
+    district: "Huaypo · Valle Sagrado",
+    totalLots: 14,
+    areaM2: 5000,
+    image: "/projects/entregados/finca-san-jose.jpg",
+    imageAlt: "Terreno verde con camino de acceso y la laguna de Huaypo al fondo",
+  },
+  {
+    slug: "vittoria",
+    name: "Vittoria",
+    district: "Huaypo · Valle Sagrado",
+    totalLots: 11,
+    areaM2: 2267,
+    image: "/projects/entregados/vittoria.jpg",
+    imageAlt: "Pradera con camino de tierra y nevados al fondo",
+  },
+  {
+    slug: "vista-lago",
+    name: "Vista Lago",
+    district: "Huaypo · Valle Sagrado",
+    totalLots: 4,
+    areaM2: 1937,
+    image: "/projects/entregados/vista-lago.jpg",
+    imageAlt: "Campo verde frente a la laguna de Huaypo y las montañas",
   },
 ];
 

@@ -4,7 +4,7 @@ import { SOLD_PROJECTS, TOTAL_SOLD_LOTS } from "@/lib/projects";
 const STATS = [
   { value: 8, label: "Proyectos urbanísticos" },
   { value: 48000, label: "M² habilitados", suffix: "+" },
-  { value: TOTAL_SOLD_LOTS, label: "Lotes entregados", suffix: "+" },
+  { value: TOTAL_SOLD_LOTS, label: "Espacios entregados", suffix: "+" },
   {
     value: SOLD_PROJECTS.length,
     label: "Proyectos 100% vendidos",
@@ -14,7 +14,8 @@ const STATS = [
 export default function Stats() {
   return (
     <section
-      className="border-y border-neutral-200/70 bg-stone px-5 py-16 sm:px-8 sm:py-20"
+      id="cifras"
+      className="scroll-mt-16 border-y border-neutral-200/70 bg-stone px-5 py-16 sm:scroll-mt-20 sm:px-8 sm:py-20"
       aria-label="Vercorp Desarrolladora en cifras"
     >
       <ul className="mx-auto grid max-w-6xl grid-cols-2 gap-y-12 lg:grid-cols-4">

@@ -10,7 +10,7 @@ import {
   type FormStatus,
 } from "@/components/forms";
 import { submitLead } from "@/lib/leads";
-import type { ActiveProject } from "@/lib/projects";
+import { getAvailability, type ActiveProject } from "@/lib/projects";
 import { SITE } from "@/lib/site";
 
 type ProjectIntent = "visita" | "compra";
@@ -37,11 +37,11 @@ const COPY: Record<
     success: "¡Nos vemos en el terreno!",
   },
   compra: {
-    title: "Separa tu lote",
+    title: "Separa tu espacio",
     description:
-      "Cuéntanos qué lote te interesa. Te confirmamos disponibilidad, precio y los pasos para hacerlo tuyo.",
-    submit: "Quiero este lote",
-    success: "¡Lote en camino!",
+      "Cuéntanos qué espacio te interesa. Te confirmamos disponibilidad, precio y los pasos para hacerlo tuyo.",
+    submit: "Quiero este espacio",
+    success: "¡Espacio en camino!",
   },
 };
 
@@ -166,7 +166,7 @@ export default function ProjectContactForm({
               title={copy.success}
               message={
                 buying
-                  ? `Recibimos tu solicitud de compra en ${project.name}. Un asesor te contactará para confirmar disponibilidad y separar tu lote.`
+                  ? `Recibimos tu solicitud de compra en ${project.name}. Un asesor te contactará para confirmar disponibilidad y separar tu espacio.`
                   : `Recibimos tu solicitud de visita a ${project.name}. Un asesor te contactará para confirmar el día y la hora.`
               }
               onReset={reset}
@@ -244,7 +244,7 @@ export default function ProjectContactForm({
                   {buying ? (
                     <>
                       <label className="sr-only" htmlFor="project-lot">
-                        Lote de interés
+                        Espacio de interés
                       </label>
                       <select
                         key="lot"
@@ -253,12 +253,17 @@ export default function ProjectContactForm({
                         defaultValue=""
                         className={inputClass}
                       >
-                        <option value="">Lote de interés (opcional)</option>
-                        {project.lots.areas.map((area, index) => (
-                          <option key={index} value={String(index + 1)}>
-                            Lote {index + 1} · {area} m²
-                          </option>
-                        ))}
+                        <option value="">Espacio de interés (opcional)</option>
+                        <option value="mas-metros">
+                          Quiero más de {project.area.from} m² (precio especial)
+                        </option>
+                        {getAvailability(project).availableSpaces.map(
+                          (space) => (
+                            <option key={space.number} value={String(space.number)}>
+                              Espacio {space.number} · {space.area} m²
+                            </option>
+                          ),
+                        )}
                       </select>
                     </>
                   ) : (

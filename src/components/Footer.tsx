@@ -36,7 +36,7 @@ export default function Footer() {
               />
             </Link>
             <p className="mt-5 max-w-xs text-sm leading-relaxed font-light text-white/55">
-              Habilitamos y lotizamos terrenos en Cusco para que construyas tu
+              Habilitamos y lotizamos terrenos en Cuzco para que construyas tu
               hogar, tu patrimonio y tu futuro.
             </p>
           </div>
@@ -46,7 +46,7 @@ export default function Footer() {
               Contacto
             </h3>
             <ul className="mt-5 space-y-3 text-sm font-light text-white/60">
-              <li>Cusco, Perú</li>
+              <li>Cuzco, Perú</li>
               <li>
                 <a
                   href={`mailto:${SITE.email}`}

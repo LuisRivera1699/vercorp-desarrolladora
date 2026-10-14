@@ -50,7 +50,7 @@ export default function Inquiry() {
       <div className="mx-auto max-w-5xl rounded-2xl bg-white px-6 py-12 shadow-[0_8px_40px_rgba(0,0,0,0.04)] sm:px-10 sm:py-14 md:rounded-3xl md:px-14 md:py-16 lg:px-16">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-[11px] font-medium tracking-[0.32em] text-neutral-400 uppercase">
-            Encuentra tu lote
+            Encuentra tu espacio
           </p>
           <h2
             id="inquiry-heading"
@@ -64,7 +64,7 @@ export default function Inquiry() {
         {status === "sent" ? (
           <SuccessMessage
             title="¡Gracias!"
-            message="Recibimos tu consulta. Un asesor de Vercorp Desarrolladora te contactará muy pronto para ayudarte a elegir tu lote."
+            message="Recibimos tu consulta. Un asesor de Vercorp Desarrolladora te contactará muy pronto para ayudarte a elegir tu espacio."
             onReset={reset}
           />
         ) : (

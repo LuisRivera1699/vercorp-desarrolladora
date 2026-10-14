@@ -11,7 +11,7 @@ export default function GrowBand() {
     >
       <ParallaxImage
         src={unsplash("1531065208531-4036c0dba3ca", 2400)}
-        alt="Montañas sagradas de Cusco al atardecer"
+        alt="Montañas sagradas de Cuzco al atardecer"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/35 to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10" />
@@ -33,14 +33,14 @@ export default function GrowBand() {
             id="grow-heading"
             className="mt-10 font-serif text-[2.5rem] leading-[1.02] font-semibold tracking-wide text-white uppercase sm:mt-12 sm:text-5xl md:text-6xl"
           >
-            Cusco crece.
+            Cuzco crece.
             <br />
             <span className="text-accent">Crece con él.</span>
           </h2>
 
           <p className="mt-6 text-sm leading-relaxed font-light text-white/80 sm:text-[0.95rem] sm:leading-8">
-            Cada lote es el comienzo de una historia: una casa para la familia,
-            un negocio propio, un patrimonio que se valoriza con el tiempo.
+            Cada espacio es el comienzo de una historia: una casa para la familia,
+            un negocio propio, un patrimonio para toda la vida.
             Construye tu futuro en la tierra donde la historia sigue
             escribiéndose.
           </p>
@@ -49,7 +49,7 @@ export default function GrowBand() {
             href="#en-venta"
             className="mt-9 inline-flex items-center justify-center bg-accent px-8 py-3.5 text-[11px] font-semibold tracking-[0.22em] text-white uppercase transition-colors duration-300 hover:bg-accent-hover sm:px-10"
           >
-            Elegir mi lote
+            Elegir mi espacio
           </a>
         </Reveal>
       </div>

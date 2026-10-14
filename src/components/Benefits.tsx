@@ -3,31 +3,37 @@ import LandIcon from "@/components/LandIcon";
 import Reveal from "@/components/Reveal";
 import SectionHeading from "@/components/SectionHeading";
 import { TOTAL_SOLD_LOTS, unsplash, type LandIconId } from "@/lib/projects";
+import { SITE } from "@/lib/site";
 
-const BENEFITS: { icon: LandIconId; title: string; description: string }[] = [
+const BENEFITS: {
+  icon: LandIconId;
+  title: string;
+  description: string;
+  href?: string;
+}[] = [
+  {
+    icon: "trend",
+    title: "Zonas con mayor proyección",
+    description:
+      "Elegimos zonas donde Cuzco está creciendo: nuevas vías, servicios y polos de desarrollo como el aeropuerto de Chinchero.",
+  },
+  {
+    icon: "location",
+    title: "Precio de entrada competitivo",
+    description:
+      "Precios por m² competitivos en zonas en plena expansión, con precios especiales si necesitas más metros.",
+  },
   {
     icon: "title",
     title: "Título en regla",
     description:
-      "Lotes independizados y saneados, listos para inscribirse a tu nombre en Registros Públicos.",
-  },
-  {
-    icon: "location",
-    title: "Ubicación con proyección",
-    description:
-      "Elegimos zonas donde Cusco está creciendo: nuevas vías, servicios y polos de desarrollo.",
-  },
-  {
-    icon: "calendar",
-    title: "Proceso simple",
-    description:
-      "Agendas tu cita, separas tu lote y firmas la escritura pública. Tres pasos claros, sin letra chica.",
+      "Espacios independizados y saneados, listos para inscribirse a tu nombre en Registros Públicos.",
   },
   {
     icon: "water",
     title: "Servicios habilitados",
     description:
-      "Agua, luz, desagüe y vías proyectadas para que construyas sin sorpresas.",
+      "Agua, luz, desagüe y vías proyectadas: un activo que puedes usar, alquilar o revender.",
   },
   {
     icon: "legal",
@@ -38,7 +44,8 @@ const BENEFITS: { icon: LandIconId; title: string; description: string }[] = [
   {
     icon: "security",
     title: "Respaldo Vercorp",
-    description: `8 proyectos desarrollados en Cusco y más de ${TOTAL_SOLD_LOTS} lotes entregados a familias que ya construyen su futuro.`,
+    description: `Holding inmobiliario con 8 proyectos desarrollados en Cuzco y más de ${TOTAL_SOLD_LOTS} espacios entregados.`,
+    href: SITE.parentUrl,
   },
 ];
 
@@ -57,9 +64,17 @@ export default function Benefits() {
                 id="benefits-heading"
                 align="left"
                 eyebrow="Por qué Vercorp"
-                title="Compra con la tranquilidad de hacerlo bien"
-                description="Un lote es el inicio de tu proyecto de vida. Por eso cuidamos cada detalle: legal, técnico y humano."
+                title="Invierte en tierra con proyección"
+                description="Un espacio en Cuzco no es un gasto: es patrimonio. En lugar de dejar tu dinero parado, lo inviertes en una zona con mayor proyección, con el respaldo de un holding inmobiliario con trayectoria."
               />
+              <a
+                href={SITE.parentUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-block text-[11px] font-semibold tracking-[0.22em] text-foreground uppercase underline-offset-4 transition-colors hover:text-accent hover:underline"
+              >
+                Conoce el holding Vercorp →
+              </a>
             </Reveal>
             <Reveal delay={150}>
               <div className="relative mt-10 aspect-[4/3] overflow-hidden rounded-2xl lg:rounded-3xl">
@@ -75,23 +90,35 @@ export default function Benefits() {
           </div>
         </div>
 
-        <ul className="grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2 lg:col-span-7 lg:self-center">
-          {BENEFITS.map((benefit, index) => (
-            <li key={benefit.title}>
-              <Reveal delay={(index % 2) * 120}>
-                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-accent/35 bg-white text-accent">
-                  <LandIcon id={benefit.icon} />
-                </div>
-                <h3 className="mt-5 font-serif text-xl font-semibold tracking-wide text-foreground uppercase">
-                  {benefit.title}
-                </h3>
-                <p className="mt-2.5 text-sm leading-relaxed font-light text-neutral-500 sm:leading-7">
-                  {benefit.description}
-                </p>
-              </Reveal>
-            </li>
-          ))}
-        </ul>
+        <div className="lg:col-span-7 lg:self-center">
+          <ul className="grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2">
+            {BENEFITS.map((benefit, index) => (
+              <li key={benefit.title}>
+                <Reveal delay={(index % 2) * 120}>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full border border-accent/35 bg-white text-accent">
+                    <LandIcon id={benefit.icon} />
+                  </div>
+                  <h3 className="mt-5 font-serif text-xl font-semibold tracking-wide text-foreground uppercase">
+                    {benefit.title}
+                  </h3>
+                  <p className="mt-2.5 text-sm leading-relaxed font-light text-neutral-500 sm:leading-7">
+                    {benefit.description}
+                  </p>
+                  {benefit.href ? (
+                    <a
+                      href={benefit.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 inline-block text-[11px] font-semibold tracking-[0.22em] text-foreground uppercase underline-offset-4 transition-colors hover:text-accent hover:underline"
+                    >
+                      Visitar {benefit.href.replace("https://", "")} →
+                    </a>
+                  ) : null}
+                </Reveal>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );

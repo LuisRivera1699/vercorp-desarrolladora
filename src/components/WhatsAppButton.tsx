@@ -4,7 +4,7 @@ export default function WhatsAppButton() {
   return (
     <a
       href={whatsappLink(
-        "Hola, quiero información sobre los lotes de Vercorp Desarrolladora.",
+        "Hola, quiero información sobre los espacios de Vercorp Desarrolladora.",
       )}
       target="_blank"
       rel="noopener noreferrer"
