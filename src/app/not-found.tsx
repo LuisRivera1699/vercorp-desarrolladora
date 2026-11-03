@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 export default function NotFound() {
   return (
@@ -27,6 +28,7 @@ export default function NotFound() {
         </div>
       </main>
       <Footer />
+      <WhatsAppButton />
     </>
   );
 }

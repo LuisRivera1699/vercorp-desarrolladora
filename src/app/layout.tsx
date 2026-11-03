@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Montserrat } from "next/font/google";
-import WhatsAppButton from "@/components/WhatsAppButton";
+import localFont from "next/font/local";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
@@ -15,6 +15,15 @@ const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const zalando = localFont({
+  variable: "--font-zalando",
+  src: [
+    { path: "./fonts/ZalandoSans-Variable.woff2", weight: "200 500", style: "normal" },
+    { path: "./fonts/ZalandoSans-VariableItalic.woff2", weight: "200 500", style: "italic" },
+  ],
   display: "swap",
 });
 
@@ -109,7 +118,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      className={`${montserrat.variable} ${cormorant.variable} h-full antialiased`}
+      className={`${montserrat.variable} ${cormorant.variable} ${zalando.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <script
@@ -117,7 +126,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         {children}
-        <WhatsAppButton />
       </body>
     </html>
   );

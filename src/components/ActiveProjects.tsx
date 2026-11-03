@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Availability from "@/components/Availability";
+import ProjectLogo from "@/components/ProjectLogo";
 import Reveal from "@/components/Reveal";
 import SectionHeading from "@/components/SectionHeading";
 import StatusBadge from "@/components/StatusBadge";
@@ -59,9 +60,10 @@ export default function ActiveProjects() {
                         {project.place}
                       </p>
                       <h3 className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-                        <span className="font-serif text-6xl leading-[0.9] font-medium tracking-[0.06em] uppercase sm:text-7xl lg:text-[5.5rem]">
-                          {project.name}
-                        </span>
+                        <ProjectLogo
+                          project={project}
+                          className="h-14 w-auto sm:h-16 lg:h-20"
+                        />
                         <span className="sr-only"> — </span>
                         <span
                           className="hidden h-16 w-px bg-white/60 sm:block"

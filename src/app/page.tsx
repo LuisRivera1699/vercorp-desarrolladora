@@ -8,6 +8,7 @@ import HowItWorks from "@/components/HowItWorks";
 import Inquiry from "@/components/Inquiry";
 import SoldProjects from "@/components/SoldProjects";
 import Stats from "@/components/Stats";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 export default function Home() {
   return (
@@ -24,6 +25,7 @@ export default function Home() {
         <Inquiry />
       </main>
       <Footer />
+      <WhatsAppButton />
     </>
   );
 }

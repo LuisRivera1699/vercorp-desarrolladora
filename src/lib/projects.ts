@@ -22,11 +22,15 @@ export type SoldProject = {
   imageAlt: string;
 };
 
-type Photo = { src: string; alt: string };
+export type Photo = { src: string; alt: string };
+
+type PhotoCard = { title: string; image: Photo };
 
 export type ActiveProject = {
   slug: string;
   name: string;
+  /** Clase que aplica la identidad visual propia del proyecto en su landing. */
+  theme: "theme-killa";
   status: ProjectStatus;
   place: string;
   tagline: string;
@@ -34,6 +38,7 @@ export type ActiveProject = {
   summary: string;
   heroImage: string;
   imageAlt: string;
+  ogImage: string;
   area: { from: number };
   pricing: {
     pricePerM2: number;
@@ -41,15 +46,29 @@ export type ActiveProject = {
     installments: number;
   };
   highlights: { value: string; label: string }[];
-  manifesto: { lead: string; quote: string[]; image: Photo };
   lots: { areas: number[]; sold: number[] };
+  intro: {
+    title: string;
+    paragraphs: string[];
+    note: string;
+    image: Photo;
+  };
   facts: { value: string; label: string }[];
-  overview: { title: string; description: string; disclaimer: string };
+  disclaimer: string;
   location: {
     title: string;
+    place: string;
+    description: string;
     distances: { value: string; label: string }[];
+    motto: string;
     image: Photo;
-    neighbor: { title: string; caption: string; images: Photo[] };
+  };
+  benefits: PhotoCard[];
+  activities: PhotoCard[];
+  growth: {
+    title: string;
+    description: string;
+    items: (PhotoCard & { description: string })[];
   };
   lotPlan: {
     image: string;
@@ -59,17 +78,12 @@ export type ActiveProject = {
     description: string;
     features: string[];
   };
-  attractions: {
-    intro: string;
-    items: { icon: LandIconId; title: string; description: string }[];
-  };
+  purchaseSteps: { title: string; description: string }[];
   backing: {
     title: string;
-    about: string[];
-    pillars: { title: string; description: string; href?: string }[];
-    images: Photo[];
+    about: string;
+    pillars: { title: string; description: string }[];
   };
-  purchaseSteps: { title: string; description: string }[];
   contact: { blurb: string; image: Photo };
 };
 
@@ -146,83 +160,166 @@ export const ACTIVE_PROJECTS: ActiveProject[] = [
   {
     slug: "killa",
     name: "Killa",
+    theme: "theme-killa",
     status: "en-venta",
-    place: "Huaypo · Valle Sagrado del Cuzco",
-    tagline: "Tu lugar en el Valle Sagrado",
-    subtitle: "Espacios con vista al lago",
+    place: "Huaypo, Cuzco",
+    tagline: "Condominio en el Valle Sagrado",
+    subtitle: "Espacios con vista a la laguna de Huaypo",
     summary:
-      "Un condominio de 29 espacios con vista al lago y al valle en Huaypo, a 30 minutos de Cuzco. Para casa de campo, segunda vivienda o inversión de largo plazo.",
-    heroImage: "/projects/killa/hero.jpg",
+      "Un condominio privado de 29 espacios en Huaypo, junto a la laguna y a 30 minutos de Cuzco. Para tu casa de campo, un lodge o una inversión que crece con el Valle Sagrado.",
+    heroImage: "/projects/killa/ingreso.jpg",
     imageAlt:
-      "Casa de campo iluminada al atardecer frente al lago, en el entorno de Fundo Lago",
+      "Ingreso del condominio Killa al atardecer, con casas de campo y la laguna de Huaypo al fondo",
+    ogImage: "/projects/killa/og.jpg",
     area: { from: 200 },
     pricing: { pricePerM2: 60, downPaymentPercent: 10, installments: 12 },
     highlights: [{ value: "30 min", label: "De Cuzco" }],
-    manifesto: {
-      lead: "Killa es el lugar donde el valle se detiene. Un sitio propio, silencioso y con vista, a 30 minutos de Cuzco.",
-      quote: [
-        "Hay lugares que se visitan. Y hay lugares que uno elige para quedarse.",
-        "En Huaypo, el lago refleja el cielo y el valle baja el ritmo. Killa nace ahí: 29 lugares, cada uno con su propia vista, para construir algo propio en el Valle Sagrado.",
-      ],
-      image: {
-        src: "/projects/killa/valle.jpg",
-        alt: "Valle Sagrado bajo un cielo de nubes, con montañas al fondo",
-      },
-    },
     // Provisional: números de espacio vendidos de ejemplo, hasta tener los reales.
     lots: { areas: KILLA_LOT_AREAS, sold: [3, 7] },
+    intro: {
+      title: "Condominio Killa",
+      paragraphs: [
+        "Killa es un condominio privado ubicado en Huaypo, Valle Sagrado, diseñado para quienes buscan naturaleza, tranquilidad y una conexión privilegiada con el paisaje.",
+        "Su principal diferencial es la cercanía a la laguna de Huaypo, con espacios rodeados de montañas, cielo abierto y vistas únicas.",
+        "Cada propietario podrá desarrollar una casa de campo pensada para aprovechar al máximo las visuales, la orientación y las características de su espacio, acompañado por nuestro equipo.",
+      ],
+      note: "Un condominio privado frente al paisaje de Huaypo.",
+      image: {
+        src: "/projects/killa/casa-hamaca.jpg",
+        alt: "Casa de campo con hamaca en la terraza, frente a las montañas y la laguna al atardecer",
+      },
+    },
     facts: [
       { value: "≈ 0.76 ha", label: "Área total del condominio" },
       { value: "1", label: "Vía de acceso interna" },
     ],
-    overview: {
-      title: "Un condominio de espacios con vista al lago y al valle",
-      description:
-        "Un terreno habilitado para uso residencial, pensado para casa de campo, segunda vivienda o inversión de largo plazo — en la misma zona que Fundo Lago.",
-      disclaimer:
-        "Áreas y linderos referenciales según levantamiento topográfico — sujetos a verificación notarial y registral.",
-    },
+    disclaimer:
+      "Áreas y linderos referenciales según levantamiento topográfico, sujetos a verificación notarial y registral.",
     location: {
-      title: "En el corazón del Valle Sagrado, junto a Fundo Lago",
+      title: "En el corazón del Valle Sagrado, junto a la laguna de Huaypo",
+      place: "Huaypo",
+      description:
+        "Un entorno natural estratégico entre Cuzco, Chinchero y el Valle Sagrado, reconocido por su amplitud, tranquilidad y cercanía a la laguna de Huaypo.",
       distances: [
-        {
-          value: "Huaypo",
-          label: "Distrito de Chinchero, Valle Sagrado de los Incas",
-        },
         { value: "30 min", label: "De la ciudad del Cuzco" },
-        { value: "10 min", label: "Del aeropuerto internacional de Chinchero" },
         {
-          value: "Al costado de Fundo Lago",
-          label: "Mismo entorno de lago y valle ya consolidado",
+          value: "10 min",
+          label: "Del nuevo aeropuerto internacional de Chinchero",
         },
       ],
+      motto:
+        "Naturaleza · Privacidad · Vistas a la laguna · Conexión con el Valle Sagrado",
       image: {
-        src: "/projects/killa/terreno.jpg",
-        alt: "Terreno de Killa con la laguna de Huaypo y las montañas al fondo",
-      },
-      neighbor: {
-        title: "Fundo Lago",
-        caption: "El entorno vecino · imágenes referenciales",
-        images: [
-          {
-            src: "/projects/killa/fundo-lago-interior.jpg",
-            alt: "Interior de una casa de campo con ventanales hacia el lago",
-          },
-          {
-            src: "/projects/killa/fundo-lago-terraza.jpg",
-            alt: "Terraza con chimenea y vista a las montañas",
-          },
-          {
-            src: "/projects/killa/fundo-lago-tina.jpg",
-            alt: "Tina de madera al aire libre frente al lago al atardecer",
-          },
-        ],
+        src: "/projects/killa/casa-valle.jpg",
+        alt: "Casa de campo con terraza y hamaca frente a una montaña del Valle Sagrado",
       },
     },
+    benefits: [
+      {
+        title: "Vista al valle más turístico del Perú",
+        image: {
+          src: "/projects/killa/vista-valle.jpg",
+          alt: "Terraza con vista al Valle Sagrado y la laguna al atardecer",
+        },
+      },
+      {
+        title: "Cercanía al nuevo aeropuerto internacional de Chinchero",
+        image: {
+          src: "/projects/killa/aeropuerto.jpg",
+          alt: "Valle de Chinchero al atardecer con la pista del nuevo aeropuerto al fondo",
+        },
+      },
+      {
+        title: "Plusvalía de inversión de 10% a 15%",
+        image: {
+          src: "/projects/killa/casa-lago.jpg",
+          alt: "Casas de campo iluminadas frente a la laguna de Huaypo",
+        },
+      },
+      {
+        title: "A 30 minutos del centro del Cuzco",
+        image: {
+          src: "/projects/killa/casa-jardin.jpg",
+          alt: "Casa de campo de piedra con jardín y montañas al fondo",
+        },
+      },
+    ],
+    activities: [
+      {
+        title: "Remo y kayak en la laguna",
+        image: {
+          src: "/projects/killa/kayak.jpg",
+          alt: "Dos personas en kayak sobre la laguna, rodeadas de montañas",
+        },
+      },
+      {
+        title: "Trekking, senderismo y trail running",
+        image: {
+          src: "/projects/killa/trekking.jpg",
+          alt: "Corredores en un sendero de montaña sobre el valle",
+        },
+      },
+      {
+        title: "Cuatrimotos y ciclismo",
+        image: {
+          src: "/projects/killa/cuatrimotos.jpg",
+          alt: "Cuatrimotos recorriendo un camino de tierra al atardecer",
+        },
+      },
+      {
+        title: "Meditación y yoga",
+        image: {
+          src: "/projects/killa/yoga.jpg",
+          alt: "Grupo practicando yoga al aire libre frente a las montañas",
+        },
+      },
+    ],
+    growth: {
+      title: "Múltiples formas de hacer crecer tu inversión",
+      description: "Un espacio, distintas posibilidades de desarrollo y uso.",
+      items: [
+        {
+          title: "Desarrollo inmobiliario",
+          description:
+            "Construye una casa de campo, lodge o proyecto diseñado alrededor del paisaje.",
+          image: {
+            src: "/projects/killa/desarrollo.jpg",
+            alt: "Casa de campo moderna con terraza y fogata frente al valle",
+          },
+        },
+        {
+          title: "Plusvalía",
+          description:
+            "Una inversión que se valoriza con el tiempo, con una proyección de crecimiento de al menos 10% anual en el valor del m².",
+          image: {
+            src: "/projects/killa/plusvalia.jpg",
+            alt: "Laguna rodeada de montañas nevadas al atardecer",
+          },
+        },
+        {
+          title: "Turismo de experiencias",
+          description:
+            "Genera ingresos con glamping, camping y excursiones en un entorno natural con alta demanda.",
+          image: {
+            src: "/projects/killa/glamping.jpg",
+            alt: "Domo de glamping con terraza y fogata frente a la laguna",
+          },
+        },
+        {
+          title: "Renta fija",
+          description:
+            "Obtén ingresos recurrentes con Airbnb o alquileres fijos.",
+          image: {
+            src: "/projects/killa/renta.jpg",
+            alt: "Dormitorio con ventanal abierto hacia la laguna y las montañas",
+          },
+        },
+      ],
+    },
     lotPlan: {
-      image: "/projects/killa/plano.png",
-      width: 1512,
-      height: 2144,
+      image: "/projects/killa/lotizacion.png",
+      width: 1429,
+      height: 833,
       alt: "Plano de lotización de Killa con 29 espacios numerados y sus áreas en m²",
       description:
         "29 espacios, numerados y delimitados por levantamiento topográfico, con vía de acceso central.",
@@ -232,95 +329,42 @@ export const ACTIVE_PROJECTS: ActiveProject[] = [
         "Acceso directo a la vía interna del condominio",
       ],
     },
-    attractions: {
-      intro:
-        "Los mismos atractivos que hacen valioso el entorno de Fundo Lago.",
-      items: [
-        {
-          icon: "trend",
-          title: "Zona con mayor proyección",
-          description:
-            "El Aeropuerto Internacional de Chinchero, en construcción a 10 minutos, impulsa el desarrollo de toda la zona.",
-        },
-        {
-          icon: "view",
-          title: "Vista y entorno natural",
-          description:
-            "Lago, montañas y valle — un paisaje que no se puede replicar cerca de la ciudad.",
-        },
-        {
-          icon: "road",
-          title: "Acceso vehicular",
-          description:
-            "Vía de acceso directa a todos los espacios del condominio.",
-        },
-        {
-          icon: "activity",
-          title: "Actividades en la zona",
-          description:
-            "Paddle, remo y kayak en el lago; trekking, cuatrimotos, meditación y yoga en los alrededores.",
-        },
-      ],
-    },
+    purchaseSteps: [
+      {
+        title: "Agenda tu cita",
+        description:
+          "Selecciona los m² que más te gusten según tus necesidades y presupuesto.",
+      },
+      {
+        title: "Separa tu espacio",
+        description: "Con una primera inicial del 10% del valor del predio.",
+      },
+      {
+        title: "Proceso jurídico",
+        description: "Firma contractual e inscripción de escritura pública.",
+      },
+    ],
     backing: {
-      title: "Un proyecto respaldado por un ecosistema real",
-      about: [
-        "Vercorp es un holding inmobiliario peruano que identifica terrenos con potencial y los convierte en proyectos y activos inmobiliarios reales — desde la adquisición hasta la operación.",
-        "Vercorp tiene más de 8 años de trayectoria en Cuzco y Killa es nuestro proyecto más reciente.",
-      ],
+      title: "Un proyecto de Vercorp Desarrolladora",
+      about:
+        "Vercorp Desarrolladora es parte de Vercorp Perú, holding inmobiliario peruano con 8 años en el rubro que identifica terrenos con potencial y los convierte en proyectos y activos inmobiliarios reales, desde la adquisición hasta la operación.",
       pillars: [
         {
-          title: "8 años",
-          description:
-            "De trayectoria construyendo valor inmobiliario en Cuzco.",
+          title: "Condominios urbanos",
+          description: "8 condominios entregados con más de 48,000 m².",
         },
         {
-          title: "WeGrow",
-          description:
-            "2 edificios en operación, +50 habitaciones generando alquileres — prueba de ejecución real, no solo promesas.",
-          href: "https://wegrow.pe",
-        },
-        {
-          title: "Procesos claros",
+          title: "Documentación legal desde el día uno",
           description:
             "Cada espacio con documentación y deslinde topográfico verificable.",
         },
       ],
-      images: [
-        {
-          src: "/projects/killa/obra-gruas.jpg",
-          alt: "Grúas sobre edificios en construcción",
-        },
-        {
-          src: "/projects/killa/obra-equipo.jpg",
-          alt: "Equipo de obra revisando avances en un edificio",
-        },
-        {
-          src: "/projects/killa/obra-encofrado.jpg",
-          alt: "Obreros trabajando en el encofrado de una estructura",
-        },
-      ],
     },
-    purchaseSteps: [
-      {
-        title: "Agenda tu cita",
-        description: "Selecciona tu espacio según tus necesidades y presupuesto.",
-      },
-      {
-        title: "Separa tu espacio",
-        description: "Pago íntegro del predio y toma de posesión.",
-      },
-      {
-        title: "Proceso jurídico",
-        description:
-          "Firma contractual e inscripción de escritura pública.",
-      },
-    ],
     contact: {
-      blurb: "Agenda tu cita y conoce el terreno en Huaypo, junto a Fundo Lago.",
+      blurb: "Agenda tu cita y sé parte de Killa.",
       image: {
-        src: "/projects/killa/planos.jpg",
-        alt: "Manos revisando los planos de un proyecto",
+        src: "/projects/killa/huaypo.jpg",
+        alt: "Campos de Huaypo bajo un cielo de nubes, con montañas al fondo",
       },
     },
   },
@@ -381,8 +425,4 @@ export const TOTAL_SOLD_LOTS = SOLD_PROJECTS.reduce(
 
 export function getActiveProject(slug: string) {
   return ACTIVE_PROJECTS.find((project) => project.slug === slug);
-}
-
-export function getOtherActiveProjects(slug: string) {
-  return ACTIVE_PROJECTS.filter((project) => project.slug !== slug);
 }

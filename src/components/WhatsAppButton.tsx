@@ -1,15 +1,19 @@
 import { whatsappLink } from "@/lib/site";
 
-export default function WhatsAppButton() {
+export default function WhatsAppButton({
+  message = "Hola, quiero información sobre los espacios de Vercorp Desarrolladora.",
+  hoverClassName = "hover:bg-accent",
+}: {
+  message?: string;
+  hoverClassName?: string;
+}) {
   return (
     <a
-      href={whatsappLink(
-        "Hola, quiero información sobre los espacios de Vercorp Desarrolladora.",
-      )}
+      href={whatsappLink(message)}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Escríbenos por WhatsApp"
-      className="group fixed right-5 bottom-5 z-40 flex h-13 w-13 items-center justify-center rounded-full bg-[#1f1f1f] text-white shadow-[0_10px_30px_rgba(0,0,0,0.25)] ring-1 ring-white/10 transition-all duration-300 hover:-translate-y-0.5 hover:bg-accent sm:right-7 sm:bottom-7 sm:h-14 sm:w-14"
+      className={`group fixed right-5 bottom-5 z-40 flex h-13 w-13 items-center justify-center rounded-full bg-ink text-white shadow-[0_10px_30px_rgba(0,0,0,0.25)] ring-1 ring-white/25 transition-all duration-300 hover:-translate-y-0.5 sm:right-7 sm:bottom-7 sm:h-14 sm:w-14 ${hoverClassName}`}
     >
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
         <path

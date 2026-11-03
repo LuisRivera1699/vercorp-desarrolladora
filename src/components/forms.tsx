@@ -8,19 +8,25 @@ export type FormStatus = "idle" | "sending" | "sent";
 export function SubmitButton({
   status,
   label = "Enviar",
+  variant = "default",
   className = "",
 }: {
   status: FormStatus;
   label?: string;
+  variant?: "default" | "pill";
   className?: string;
 }) {
   const sending = status === "sending";
+  const shape =
+    variant === "pill"
+      ? "rounded-full text-sm font-medium"
+      : "rounded-md text-[11px] font-semibold tracking-[0.22em] uppercase";
 
   return (
     <button
       type="submit"
       disabled={sending}
-      className={`inline-flex h-12 items-center justify-center gap-2.5 rounded-md bg-accent px-8 text-[11px] font-semibold tracking-[0.22em] text-white uppercase transition-colors duration-300 hover:bg-accent-hover disabled:cursor-wait disabled:opacity-80 sm:h-[3.25rem] ${className}`}
+      className={`inline-flex h-12 items-center justify-center gap-2.5 bg-accent px-8 text-white transition-colors duration-300 hover:bg-accent-hover disabled:cursor-wait disabled:opacity-80 sm:h-[3.25rem] ${shape} ${className}`}
     >
       {sending ? (
         <>

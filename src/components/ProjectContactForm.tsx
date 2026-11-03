@@ -9,6 +9,7 @@ import {
   TermsCheckbox,
   type FormStatus,
 } from "@/components/forms";
+import ProjectLogo from "@/components/ProjectLogo";
 import { submitLead } from "@/lib/leads";
 import { getAvailability, type ActiveProject } from "@/lib/projects";
 import { SITE } from "@/lib/site";
@@ -104,63 +105,64 @@ export default function ProjectContactForm({
     <section
       ref={sectionRef}
       id="contacto-proyecto"
-      className="relative scroll-mt-16 overflow-hidden bg-ink px-5 py-16 sm:scroll-mt-20 sm:px-8 sm:py-20 md:py-28"
+      className="grid scroll-mt-16 bg-background sm:scroll-mt-20 lg:grid-cols-2"
       aria-labelledby="project-contact-heading"
     >
-      <Image
-        src={project.contact.image.src}
-        alt=""
-        fill
-        sizes="100vw"
-        className="object-cover opacity-40 grayscale"
-      />
-      <div className="absolute inset-0 bg-gradient-to-br from-ink/90 via-ink/70 to-ink/40" />
+      <div className="relative isolate flex min-h-[26rem] flex-col justify-between overflow-hidden px-5 py-10 text-background sm:px-10 sm:py-12 lg:min-h-[44rem] lg:px-14 lg:py-16">
+        <Image
+          src={project.contact.image.src}
+          alt={project.contact.image.alt}
+          fill
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          className="-z-10 object-cover"
+        />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink/90 via-ink/35 to-ink/25" />
 
-      <div className="relative mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-12 lg:gap-14">
-        <div className="text-white lg:col-span-4">
-          <p className="text-[11px] font-medium tracking-[0.32em] text-accent uppercase">
-            {project.name}
-          </p>
+        <ProjectLogo project={project} className="h-9 w-auto sm:h-11" />
+
+        <div>
           <h2
             id="project-contact-heading"
-            className="mt-4 font-serif text-[2.2rem] leading-[1.05] font-semibold tracking-wide uppercase sm:text-5xl"
+            className="text-[2.75rem] leading-none font-extralight tracking-[-0.02em] sm:text-6xl"
           >
             Conversemos
           </h2>
-          <p className="mt-5 max-w-sm text-sm leading-relaxed font-light text-white/75 sm:text-[0.95rem] sm:leading-8">
+          <p className="mt-4 text-[15px] font-light text-background/85 sm:text-base">
             {project.contact.blurb}
           </p>
-          <ul className="mt-8 space-y-3 text-sm font-light text-white/70">
+          <ul className="mt-8 space-y-1.5 text-sm font-light text-background/70">
             <li>
               <a
-                href={SITE.parentUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-colors hover:text-accent"
+                href={`tel:${SITE.phone}`}
+                className="transition-colors hover:text-background"
               >
-                {SITE.parentUrl.replace("https://", "www.")}
+                {SITE.phoneLabel}
               </a>
             </li>
             <li>
               <a
                 href={`mailto:${SITE.email}`}
-                className="transition-colors hover:text-accent"
+                className="transition-colors hover:text-background"
               >
                 {SITE.email}
               </a>
             </li>
             <li>
               <a
-                href={`tel:${SITE.phone}`}
-                className="transition-colors hover:text-accent"
+                href={SITE.parentUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-background"
               >
-                {SITE.phoneLabel}
+                {SITE.parentUrl.replace("https://", "www.")}
               </a>
             </li>
           </ul>
         </div>
+      </div>
 
-        <div className="rounded-2xl bg-white px-6 py-10 shadow-[0_24px_60px_rgba(0,0,0,0.25)] sm:px-10 sm:py-12 lg:col-span-8 lg:rounded-3xl">
+      <div className="flex items-center px-5 py-14 sm:px-10 sm:py-16 lg:px-14 lg:py-20 xl:px-20">
+        <div className="w-full max-w-xl">
           {status === "sent" ? (
             <SuccessMessage
               title={copy.success}
@@ -185,10 +187,10 @@ export default function ProjectContactForm({
                     role="tab"
                     aria-selected={intent === tab.id}
                     onClick={() => setIntent(tab.id)}
-                    className={`flex-1 rounded-full px-3 py-2.5 text-[10px] font-semibold tracking-[0.16em] whitespace-nowrap uppercase transition-all duration-300 sm:px-4 sm:text-[11px] sm:tracking-[0.2em] ${
+                    className={`flex-1 rounded-full px-3 py-2.5 text-[13px] whitespace-nowrap transition-all duration-300 sm:px-4 ${
                       intent === tab.id
-                        ? "bg-white text-foreground shadow-[0_2px_10px_rgba(0,0,0,0.06)]"
-                        : "text-neutral-500 hover:text-foreground"
+                        ? "bg-foreground font-medium text-background"
+                        : "text-foreground/60 hover:text-foreground"
                     }`}
                   >
                     {tab.label}
@@ -196,10 +198,10 @@ export default function ProjectContactForm({
                 ))}
               </div>
 
-              <h3 className="mt-8 font-serif text-2xl font-semibold tracking-wide text-foreground uppercase sm:text-3xl">
+              <h3 className="mt-9 text-3xl font-extralight tracking-[-0.01em] text-foreground sm:text-4xl">
                 {copy.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed font-light text-neutral-500">
+              <p className="mt-3 text-[15px] leading-relaxed font-light text-foreground/65">
                 {copy.description}
               </p>
 
@@ -293,27 +295,26 @@ export default function ProjectContactForm({
                   )}
                 </div>
 
-                <div className="mt-3 flex flex-col gap-3 sm:flex-row md:mt-4 md:gap-4">
-                  <label className="sr-only" htmlFor="project-message">
-                    Mensaje
-                  </label>
-                  <textarea
-                    id="project-message"
-                    name="message"
-                    rows={3}
-                    placeholder={
-                      buying
-                        ? "¿Algo más que debamos saber? (opcional)"
-                        : "¿Alguna consulta antes de la visita? (opcional)"
-                    }
-                    className="w-full flex-1 rounded-md border border-neutral-300 bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-neutral-400 focus:border-accent"
-                  />
-                  <SubmitButton
-                    status={status}
-                    label={copy.submit}
-                    className="shrink-0 sm:h-auto sm:self-stretch md:min-w-[11rem]"
-                  />
-                </div>
+                <label className="sr-only" htmlFor="project-message">
+                  Mensaje
+                </label>
+                <textarea
+                  id="project-message"
+                  name="message"
+                  rows={3}
+                  placeholder={
+                    buying
+                      ? "¿Algo más que debamos saber? (opcional)"
+                      : "¿Alguna consulta antes de la visita? (opcional)"
+                  }
+                  className="mt-3 w-full rounded-md border border-neutral-300 bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-neutral-400 focus:border-accent md:mt-4"
+                />
+                <SubmitButton
+                  status={status}
+                  label={copy.submit}
+                  variant="pill"
+                  className="mt-3 w-full md:mt-4"
+                />
 
                 <TermsCheckbox
                   checked={accepted}
