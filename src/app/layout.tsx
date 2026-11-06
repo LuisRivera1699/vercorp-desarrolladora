@@ -29,6 +29,13 @@ const zalando = localFont({
 const description =
   "Vercorp Desarrolladora habilita y lotiza terrenos en Cuzco. Ahora en venta: Killa, espacios con vista al lago en Huaypo, Valle Sagrado, a 30 minutos de Cuzco.";
 
+const ogImage = {
+  url: "/og.jpg",
+  width: 1200,
+  height: 630,
+  alt: `${SITE.name}, terrenos lotificados en Cuzco`,
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
@@ -61,19 +68,13 @@ export const metadata: Metadata = {
     siteName: SITE.name,
     title: "Vercorp Desarrolladora | Terrenos lotificados en Cuzco",
     description,
-    images: [
-      {
-        url: "/brand/vercorp-desarrolladora-logo-dark.png",
-        width: 900,
-        height: 291,
-        alt: SITE.name,
-      },
-    ],
+    images: [ogImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "Vercorp Desarrolladora | Terrenos lotificados en Cuzco",
     description,
+    images: [ogImage.url],
   },
   robots: {
     index: true,
@@ -104,8 +105,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       url: SITE.parentUrl,
     },
     url: SITE.url,
+    logo: `${SITE.url}/brand/vercorp-desarrolladora-logo-dark.png`,
+    image: `${SITE.url}${ogImage.url}`,
     email: SITE.email,
     telephone: SITE.phone,
+    sameAs: [SITE.instagram],
     address: {
       "@type": "PostalAddress",
       addressLocality: "Cuzco",

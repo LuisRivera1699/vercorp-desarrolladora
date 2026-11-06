@@ -1,8 +1,8 @@
 export const SITE = {
   name: "Vercorp Desarrolladora",
-  url: "https://proyectos.vercorp.com",
+  url: "https://desarrolladora.vercorpperu.com",
   parentUrl: "https://vercorpperu.com",
-  wegrowUrl: "https://wegrow.pe",
+  wegrowUrl: "https://wegrow.vercorpperu.com",
   email: "contacto@vercorpperu.com",
   bookingUrl:
     "https://calendar.google.com/appointments/schedules/AcZssZ2dAMV_EP_1eV1RY-yFLYonYK6Mx4xxxleKsLmItk2YDwZzpUA9_zd3pn8BWyQG0y4fteFGB888",
