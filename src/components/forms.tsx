@@ -1,9 +1,54 @@
 "use client";
 
+import { SITE, whatsappLink } from "@/lib/site";
+
 export const inputClass =
   "h-12 w-full rounded-md border border-neutral-300 bg-white px-4 text-sm text-foreground placeholder:text-neutral-400 outline-none transition-colors focus:border-accent sm:h-[3.25rem]";
 
-export type FormStatus = "idle" | "sending" | "sent";
+export type FormStatus = "idle" | "sending" | "sent" | "error";
+
+export const FIELD_LIMITS = { name: 120, phone: 30, email: 200, message: 1000 } as const;
+
+export function Honeypot() {
+  return (
+    <div className="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden>
+      <label htmlFor="lead-website">Sitio web</label>
+      <input id="lead-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+    </div>
+  );
+}
+
+export function isBot(data: FormData) {
+  return String(data.get("website") ?? "") !== "";
+}
+
+export function FormError({ whatsappMessage }: { whatsappMessage: string }) {
+  return (
+    <p role="alert" className="mt-5 text-center text-[13px] leading-relaxed text-red-600">
+      No pudimos enviar tu consulta. Inténtalo de nuevo o{" "}
+      <a
+        href={whatsappLink(whatsappMessage)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-medium text-foreground underline underline-offset-2 hover:text-accent"
+      >
+        escríbenos por WhatsApp
+      </a>
+      .
+    </p>
+  );
+}
+
+type ButtonVariant = "default" | "pill";
+
+const buttonBase =
+  "inline-flex h-12 items-center justify-center gap-2.5 bg-accent px-8 text-white transition-colors duration-300 hover:bg-accent-hover sm:h-[3.25rem]";
+
+function buttonShape(variant: ButtonVariant) {
+  return variant === "pill"
+    ? "rounded-full text-sm font-medium"
+    : "rounded-md text-[11px] font-semibold tracking-[0.22em] uppercase";
+}
 
 export function SubmitButton({
   status,
@@ -13,20 +58,16 @@ export function SubmitButton({
 }: {
   status: FormStatus;
   label?: string;
-  variant?: "default" | "pill";
+  variant?: ButtonVariant;
   className?: string;
 }) {
   const sending = status === "sending";
-  const shape =
-    variant === "pill"
-      ? "rounded-full text-sm font-medium"
-      : "rounded-md text-[11px] font-semibold tracking-[0.22em] uppercase";
 
   return (
     <button
       type="submit"
       disabled={sending}
-      className={`inline-flex h-12 items-center justify-center gap-2.5 bg-accent px-8 text-white transition-colors duration-300 hover:bg-accent-hover disabled:cursor-wait disabled:opacity-80 sm:h-[3.25rem] ${shape} ${className}`}
+      className={`${buttonBase} disabled:cursor-wait disabled:opacity-80 ${buttonShape(variant)} ${className}`}
     >
       {sending ? (
         <>
@@ -87,10 +128,14 @@ export function SuccessMessage({
   title,
   message,
   onReset,
+  bookingText = "Agenda una llamada con uno de nuestros asesores en el horario que mejor te acomode.",
+  variant = "default",
 }: {
   title: string;
   message: string;
   onReset: () => void;
+  bookingText?: string;
+  variant?: ButtonVariant;
 }) {
   return (
     <div
@@ -112,13 +157,45 @@ export function SuccessMessage({
         {title}
       </h3>
       <p className="mt-3 text-sm leading-relaxed text-neutral-500">{message}</p>
+
+      <div className="mt-8 w-full border-t border-neutral-200 pt-7">
+        <p className="text-[11px] font-medium tracking-[0.32em] text-neutral-400 uppercase">
+          ¿Prefieres no esperar?
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-neutral-500">{bookingText}</p>
+        <a
+          href={SITE.bookingUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`${buttonBase} mt-5 ${buttonShape(variant)}`}
+        >
+          Agendar llamada
+          <ExternalArrow />
+          <span className="sr-only">(se abre en una pestaña nueva)</span>
+        </a>
+      </div>
+
       <button
         type="button"
         onClick={onReset}
-        className="mt-6 text-[11px] font-semibold tracking-[0.22em] text-accent uppercase transition-colors hover:text-accent-hover"
+        className="mt-7 text-[11px] font-semibold tracking-[0.22em] text-accent uppercase transition-colors hover:text-accent-hover"
       >
         Enviar otra consulta
       </button>
     </div>
+  );
+}
+
+function ExternalArrow() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M7 17L17 7M9 7h8v8"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }

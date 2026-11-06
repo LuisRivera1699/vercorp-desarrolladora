@@ -3,7 +3,11 @@
 import Image from "next/image";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import {
+  FIELD_LIMITS,
+  FormError,
+  Honeypot,
   inputClass,
+  isBot,
   SubmitButton,
   SuccessMessage,
   TermsCheckbox,
@@ -25,6 +29,10 @@ const TABS: { id: ProjectIntent; label: string }[] = [
   { id: "visita", label: "Agendar visita" },
   { id: "compra", label: "Quiero comprar" },
 ];
+
+function todayInLima() {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Lima" }).format(new Date());
+}
 
 const COPY: Record<
   ProjectIntent,
@@ -76,20 +84,34 @@ export default function ProjectContactForm({
     if (!accepted || status === "sending") return;
 
     const data = new FormData(event.currentTarget);
+    if (isBot(data)) {
+      setStatus("sent");
+      return;
+    }
+
     setStatus("sending");
-    await submitLead({
-      source: "proyecto",
-      intent,
-      project: project.slug,
-      name: String(data.get("name") ?? ""),
-      phone: String(data.get("phone") ?? ""),
-      email: String(data.get("email") ?? ""),
-      message: String(data.get("message") ?? ""),
-      ...(intent === "compra"
-        ? { lot: String(data.get("lot") ?? "") }
-        : { visitDate: String(data.get("visitDate") ?? "") }),
-    });
-    setStatus("sent");
+    try {
+      await submitLead({
+        source: "proyecto",
+        intent,
+        project: project.slug,
+        name: String(data.get("name") ?? ""),
+        phone: String(data.get("phone") ?? ""),
+        email: String(data.get("email") ?? ""),
+        message: String(data.get("message") ?? ""),
+        ...(intent === "compra"
+          ? { lot: String(data.get("lot") ?? "") }
+          : { visitDate: String(data.get("visitDate") ?? "") }),
+      });
+      setStatus("sent");
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  const selectIntent = (next: ProjectIntent) => {
+    setIntent(next);
+    if (status === "error") setStatus("idle");
   };
 
   const reset = () => {
@@ -172,6 +194,12 @@ export default function ProjectContactForm({
                   : `Recibimos tu solicitud de visita a ${project.name}. Un asesor te contactará para confirmar el día y la hora.`
               }
               onReset={reset}
+              variant="pill"
+              bookingText={
+                buying
+                  ? undefined
+                  : "Agenda una llamada y coordina tu visita con un asesor al instante."
+              }
             />
           ) : (
             <>
@@ -186,7 +214,7 @@ export default function ProjectContactForm({
                     type="button"
                     role="tab"
                     aria-selected={intent === tab.id}
-                    onClick={() => setIntent(tab.id)}
+                    onClick={() => selectIntent(tab.id)}
                     className={`flex-1 rounded-full px-3 py-2.5 text-[13px] whitespace-nowrap transition-all duration-300 sm:px-4 ${
                       intent === tab.id
                         ? "bg-foreground font-medium text-background"
@@ -215,6 +243,7 @@ export default function ProjectContactForm({
                     name="name"
                     type="text"
                     required
+                    maxLength={FIELD_LIMITS.name}
                     autoComplete="name"
                     placeholder="Nombre y apellido"
                     className={inputClass}
@@ -227,6 +256,7 @@ export default function ProjectContactForm({
                     name="phone"
                     type="tel"
                     required
+                    maxLength={FIELD_LIMITS.phone}
                     autoComplete="tel"
                     placeholder="Número de teléfono"
                     className={inputClass}
@@ -238,6 +268,7 @@ export default function ProjectContactForm({
                     id="project-email"
                     name="email"
                     type="email"
+                    maxLength={FIELD_LIMITS.email}
                     autoComplete="email"
                     placeholder="Correo electrónico (opcional)"
                     className={inputClass}
@@ -282,7 +313,7 @@ export default function ProjectContactForm({
                         onFocus={(event) => {
                           const input = event.currentTarget;
                           input.type = "date";
-                          input.min = new Date().toISOString().slice(0, 10);
+                          input.min = todayInLima();
                         }}
                         onBlur={(event) => {
                           if (!event.currentTarget.value) {
@@ -302,6 +333,7 @@ export default function ProjectContactForm({
                   id="project-message"
                   name="message"
                   rows={3}
+                  maxLength={FIELD_LIMITS.message}
                   placeholder={
                     buying
                       ? "¿Algo más que debamos saber? (opcional)"
@@ -315,6 +347,18 @@ export default function ProjectContactForm({
                   variant="pill"
                   className="mt-3 w-full md:mt-4"
                 />
+
+                <Honeypot />
+
+                {status === "error" && (
+                  <FormError
+                    whatsappMessage={
+                      buying
+                        ? `Hola, quiero comprar un espacio en ${project.name}.`
+                        : `Hola, quiero agendar una visita a ${project.name}.`
+                    }
+                  />
+                )}
 
                 <TermsCheckbox
                   checked={accepted}

@@ -12,9 +12,24 @@ export type Lead = {
   message?: string;
 };
 
-// Sin backend todavía: simula la latencia de un envío real.
-export async function submitLead(lead: Lead): Promise<{ ok: true }> {
-  void lead;
-  await new Promise((resolve) => setTimeout(resolve, 1200));
-  return { ok: true };
+const OPTIONAL_FIELDS = ["email", "project", "lot", "visitDate", "message"] as const;
+
+export async function submitLead(lead: Lead) {
+  const [{ firebaseApp }, { addDoc, collection, getFirestore, serverTimestamp }] =
+    await Promise.all([import("./firebaseApp"), import("firebase/firestore/lite")]);
+
+  const optional = Object.fromEntries(
+    OPTIONAL_FIELDS.map((key) => [key, lead[key]?.trim()] as const).filter(([, value]) => value),
+  );
+
+  await addDoc(collection(getFirestore(firebaseApp), "contacts"), {
+    site: "proyectos",
+    source: lead.source,
+    interest: lead.intent,
+    name: lead.name.trim(),
+    phone: lead.phone.trim(),
+    ...optional,
+    consent: true,
+    createdAt: serverTimestamp(),
+  });
 }

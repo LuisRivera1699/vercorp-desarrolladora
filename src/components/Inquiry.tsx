@@ -2,7 +2,11 @@
 
 import { FormEvent, useState } from "react";
 import {
+  FIELD_LIMITS,
+  FormError,
+  Honeypot,
   inputClass,
+  isBot,
   SubmitButton,
   SuccessMessage,
   TermsCheckbox,
@@ -22,17 +26,26 @@ export default function Inquiry() {
     if (!accepted || status === "sending") return;
 
     const data = new FormData(event.currentTarget);
+    if (isBot(data)) {
+      setStatus("sent");
+      return;
+    }
+
     setStatus("sending");
-    await submitLead({
-      source: "home",
-      intent: "info",
-      name: String(data.get("name") ?? ""),
-      phone: String(data.get("phone") ?? ""),
-      email: String(data.get("email") ?? ""),
-      project: String(data.get("project") ?? ""),
-      message: String(data.get("message") ?? ""),
-    });
-    setStatus("sent");
+    try {
+      await submitLead({
+        source: "home",
+        intent: "info",
+        name: String(data.get("name") ?? ""),
+        phone: String(data.get("phone") ?? ""),
+        email: String(data.get("email") ?? ""),
+        project: String(data.get("project") ?? ""),
+        message: String(data.get("message") ?? ""),
+      });
+      setStatus("sent");
+    } catch {
+      setStatus("error");
+    }
   };
 
   const reset = () => {
@@ -78,6 +91,7 @@ export default function Inquiry() {
                 name="name"
                 type="text"
                 required
+                maxLength={FIELD_LIMITS.name}
                 autoComplete="name"
                 placeholder="Nombre y apellido"
                 className={inputClass}
@@ -91,6 +105,7 @@ export default function Inquiry() {
                 name="phone"
                 type="tel"
                 required
+                maxLength={FIELD_LIMITS.phone}
                 autoComplete="tel"
                 placeholder="Número de teléfono"
                 className={inputClass}
@@ -104,6 +119,7 @@ export default function Inquiry() {
                 name="email"
                 type="email"
                 required
+                maxLength={FIELD_LIMITS.email}
                 autoComplete="email"
                 placeholder="Correo electrónico"
                 className={inputClass}
@@ -139,6 +155,7 @@ export default function Inquiry() {
                 id="inquiry-message"
                 name="message"
                 rows={3}
+                maxLength={FIELD_LIMITS.message}
                 placeholder="¿Qué te gustaría construir? (opcional)"
                 className="w-full flex-1 rounded-md border border-neutral-300 bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-neutral-400 focus:border-accent"
               />
@@ -147,6 +164,12 @@ export default function Inquiry() {
                 className="shrink-0 sm:h-auto sm:self-stretch md:min-w-[9.5rem]"
               />
             </div>
+
+            <Honeypot />
+
+            {status === "error" && (
+              <FormError whatsappMessage="Hola, quiero información sobre los proyectos de Vercorp Desarrolladora." />
+            )}
 
             <TermsCheckbox
               checked={accepted}
