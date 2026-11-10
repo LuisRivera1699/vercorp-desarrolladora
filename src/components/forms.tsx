@@ -1,5 +1,6 @@
 "use client";
 
+import { TermsLink } from "@/components/TermsModal";
 import { useSiteSettings } from "@/components/SiteSettings";
 import { whatsappLink } from "@/lib/home/contact";
 
@@ -108,12 +109,12 @@ export function TermsCheckbox({
         />
         <span className="text-[12px] leading-relaxed text-neutral-500 sm:text-[13px]">
           Acepto los{" "}
-          <a
-            href="#"
+          <TermsLink
+            onAccept={() => onChange(true)}
             className="font-medium text-foreground underline-offset-2 hover:underline"
           >
             términos y condiciones
-          </a>{" "}
+          </TermsLink>{" "}
           para el tratamiento de datos personales.
         </span>
       </label>

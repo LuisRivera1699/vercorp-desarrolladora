@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { SiteSettingsProvider } from "@/components/SiteSettings";
+import { TermsProvider } from "@/components/TermsModal";
 import { plainPhone } from "@/lib/home/contact";
 import { getSiteSettings } from "@/lib/home/fetch";
 import { SITE } from "@/lib/site";
@@ -132,7 +133,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <SiteSettingsProvider settings={settings}>{children}</SiteSettingsProvider>
+        <SiteSettingsProvider settings={settings}>
+          <TermsProvider>{children}</TermsProvider>
+        </SiteSettingsProvider>
       </body>
     </html>
   );

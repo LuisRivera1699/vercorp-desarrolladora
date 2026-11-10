@@ -6,6 +6,7 @@ import { getSiteSettings } from "@/lib/home/fetch";
 import { isLightColor, sectionVars } from "@/lib/projects/theme";
 import type { Project } from "@/lib/projects/types";
 import { SITE } from "@/lib/site";
+import { TermsLink } from "./TermsModal";
 
 export default async function ProjectFooter({
   project,
@@ -93,9 +94,9 @@ export default async function ProjectFooter({
                 </Link>
               </li>
               <li>
-                <a href="#" className="transition-colors hover:text-s-fg">
+                <TermsLink className="text-left transition-colors hover:text-s-fg">
                   Términos y condiciones
-                </a>
+                </TermsLink>
               </li>
             </ul>
           </div>

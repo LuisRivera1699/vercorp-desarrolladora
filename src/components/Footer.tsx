@@ -4,12 +4,12 @@ import { telHref } from "@/lib/home/contact";
 import type { ContactContent, FooterContent } from "@/lib/home/types";
 import { getProjects } from "@/lib/projects/fetch";
 import { SITE } from "@/lib/site";
+import { TermsLink } from "./TermsModal";
 
 const FIXED_LINKS = [
   { label: "Proyectos entregados", href: "/#entregados", external: false },
   { label: "Vercorp", href: SITE.parentUrl, external: true },
   { label: "WeGrow", href: SITE.wegrowUrl, external: true },
-  { label: "Términos y Condiciones", href: "#", external: false },
 ];
 
 export default async function Footer({
@@ -103,6 +103,11 @@ export default async function Footer({
                   )}
                 </li>
               ))}
+              <li>
+                <TermsLink className="text-left transition-colors hover:text-accent">
+                  Términos y Condiciones
+                </TermsLink>
+              </li>
             </ul>
           </div>
         </div>

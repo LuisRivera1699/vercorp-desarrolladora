@@ -1,4 +1,4 @@
-type FirestoreValue = {
+export type FirestoreValue = {
   stringValue?: string;
   integerValue?: string;
   doubleValue?: number;
@@ -25,7 +25,7 @@ function decodeValue(value: FirestoreValue): unknown {
   return null;
 }
 
-function decodeFields(fields: Record<string, FirestoreValue> = {}) {
+export function decodeFields(fields: Record<string, FirestoreValue> = {}) {
   return Object.fromEntries(
     Object.entries(fields).map(([key, value]) => [key, decodeValue(value)]),
   );
