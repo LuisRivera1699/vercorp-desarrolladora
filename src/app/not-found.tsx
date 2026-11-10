@@ -2,11 +2,14 @@ import Link from "next/link";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import { getHome } from "@/lib/home/fetch";
 
-export default function NotFound() {
+export default async function NotFound() {
+  const home = await getHome();
+
   return (
     <>
-      <Header solid />
+      <Header content={home.header} solid />
       <main className="flex flex-1 items-center justify-center bg-stone px-6 pt-32 pb-24 text-center">
         <div className="flex max-w-lg flex-col items-center">
           <p className="font-serif text-7xl font-semibold text-accent sm:text-8xl">
@@ -27,7 +30,7 @@ export default function NotFound() {
           </Link>
         </div>
       </main>
-      <Footer />
+      <Footer content={home.footer} contact={home.contact} />
       <WhatsAppButton />
     </>
   );

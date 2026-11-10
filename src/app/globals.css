@@ -20,6 +20,22 @@
   --color-earth: var(--earth);
   --color-stone: var(--stone);
   --color-ink: var(--ink);
+  /* Colores de cada sección de un proyecto; los define el admin (ver sectionVars). */
+  --color-s-bg: var(--s-bg);
+  --color-s-fg: var(--s-fg);
+  --color-s-accent: var(--s-accent);
+  --color-s-card: var(--s-card);
+  --color-s-on-photo: var(--s-on-photo);
+  --color-s-detail: var(--s-detail);
+  --color-s-dot: var(--s-dot);
+  --color-s-btn: var(--s-btn);
+  --color-s-btn-fg: var(--s-btn-fg);
+  --color-s-btn-hover: var(--s-btn-hover);
+  --color-s-btn-hover-fg: var(--s-btn-hover-fg);
+  --color-s-btn2: var(--s-btn2);
+  --color-s-btn2-fg: var(--s-btn2-fg);
+  --color-s-btn2-hover: var(--s-btn2-hover);
+  --color-s-btn2-hover-fg: var(--s-btn2-hover-fg);
   --font-sans: var(--font-montserrat);
   --font-serif: var(--font-cormorant);
 }
@@ -42,24 +58,14 @@ body {
   background: color-mix(in srgb, var(--accent) 40%, transparent);
 }
 
-/* Identidad propia de Killa: redefine los tokens solo dentro de su landing. */
-.theme-killa {
-  --background: #f1f1ea;
-  --foreground: #26161f;
-  --accent: #26161f;
-  --accent-hover: #43303b;
-  --accent-soft: #c1a9b7;
-  --earth: #6f5d66;
-  --stone: #e7e4da;
-  --ink: #26161f;
-  --font-montserrat: var(--font-zalando);
-  --font-cormorant: var(--font-zalando);
+/* Identidad de cada proyecto: la paleta y la tipografía llegan como variables desde el admin. */
+.project-theme {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-zalando), system-ui, sans-serif;
+  font-family: var(--project-font), system-ui, sans-serif;
 }
 
-.theme-killa ::selection {
+.project-theme ::selection {
   background: color-mix(in srgb, var(--accent-soft) 70%, transparent);
 }
 

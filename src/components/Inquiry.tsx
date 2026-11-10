@@ -12,10 +12,18 @@ import {
   TermsCheckbox,
   type FormStatus,
 } from "@/components/forms";
+import Lines from "@/components/Lines";
+import type { ContactContent } from "@/lib/home/types";
 import { submitLead } from "@/lib/leads";
-import { ACTIVE_PROJECTS } from "@/lib/projects";
+import type { Project } from "@/lib/projects/types";
 
-export default function Inquiry() {
+export default function Inquiry({
+  content,
+  projects,
+}: {
+  content: ContactContent;
+  projects: Pick<Project, "slug" | "name" | "place">[];
+}) {
   const [accepted, setAccepted] = useState(false);
   const [attempted, setAttempted] = useState(false);
   const [status, setStatus] = useState<FormStatus>("idle");
@@ -63,21 +71,20 @@ export default function Inquiry() {
       <div className="mx-auto max-w-5xl rounded-2xl bg-white px-6 py-12 shadow-[0_8px_40px_rgba(0,0,0,0.04)] sm:px-10 sm:py-14 md:rounded-3xl md:px-14 md:py-16 lg:px-16">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-[11px] font-medium tracking-[0.32em] text-neutral-400 uppercase">
-            Encuentra tu espacio
+            {content.eyebrow}
           </p>
           <h2
             id="inquiry-heading"
             className="mt-4 font-serif text-[1.55rem] leading-[1.2] font-semibold tracking-wide text-foreground uppercase sm:text-3xl md:text-[2.15rem] md:leading-[1.18]"
           >
-            Hablemos de tu próximo proyecto.
-            <br className="hidden sm:block" /> Un asesor te contactará.
+            <Lines text={content.title} breakClassName="hidden sm:block" />
           </h2>
         </div>
 
         {status === "sent" ? (
           <SuccessMessage
-            title="¡Gracias!"
-            message="Recibimos tu consulta. Un asesor de Vercorp Desarrolladora te contactará muy pronto para ayudarte a elegir tu espacio."
+            title={content.successTitle}
+            message={content.successMessage}
             onReset={reset}
           />
         ) : (
@@ -138,7 +145,7 @@ export default function Inquiry() {
                 <option value="" disabled>
                   Proyecto de interés…
                 </option>
-                {ACTIVE_PROJECTS.map((project) => (
+                {projects.map((project) => (
                   <option key={project.slug} value={project.slug}>
                     {project.name} · {project.place}
                   </option>

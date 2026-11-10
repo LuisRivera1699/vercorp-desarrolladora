@@ -3,15 +3,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { NAV_ITEMS } from "@/lib/home/constants";
+import type { HeaderContent } from "@/lib/home/types";
 
-const NAV = [
-  { label: "Inicio", href: "/" },
-  { label: "En venta", href: "/#en-venta" },
-  { label: "Entregados", href: "/#entregados" },
-  { label: "Contacto", href: "/#contacto" },
-] as const;
-
-export default function Header({ solid = false }: { solid?: boolean }) {
+export default function Header({
+  content,
+  solid = false,
+}: {
+  content: HeaderContent;
+  solid?: boolean;
+}) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -34,6 +35,8 @@ export default function Header({ solid = false }: { solid?: boolean }) {
   }, [menuOpen]);
 
   const inverted = solid || scrolled || menuOpen;
+  const logo = inverted ? content.logoDark : content.logoLight;
+  const nav = NAV_ITEMS.map((item) => ({ label: content.nav[item.key], href: item.href }));
 
   return (
     <header
@@ -51,23 +54,19 @@ export default function Header({ solid = false }: { solid?: boolean }) {
           onClick={() => setMenuOpen(false)}
         >
           <Image
-            src={
-              inverted
-                ? "/brand/vercorp-desarrolladora-logo-dark.png"
-                : "/brand/vercorp-desarrolladora-logo.png"
-            }
-            alt="Vercorp Desarrolladora"
-            width={900}
-            height={291}
+            src={logo.url}
+            alt={logo.alt}
+            width={logo.width}
+            height={logo.height}
             priority
             className="h-9 w-auto sm:h-10"
           />
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex lg:gap-10">
-          {NAV.map((item) => (
+          {nav.map((item) => (
             <Link
-              key={item.label}
+              key={item.href}
               href={item.href}
               className={`text-[11px] font-medium tracking-[0.2em] uppercase transition-colors ${
                 inverted
@@ -86,7 +85,7 @@ export default function Header({ solid = false }: { solid?: boolean }) {
                 : "border-white/80 text-white hover:bg-white hover:text-foreground"
             }`}
           >
-            Quiero mi espacio
+            {content.ctaLabel}
           </Link>
         </nav>
 
@@ -126,9 +125,9 @@ export default function Header({ solid = false }: { solid?: boolean }) {
         }`}
       >
         <nav className="flex flex-col items-center gap-8 pt-16">
-          {NAV.map((item) => (
+          {nav.map((item) => (
             <Link
-              key={item.label}
+              key={item.href}
               href={item.href}
               onClick={() => setMenuOpen(false)}
               className="text-sm font-medium tracking-[0.22em] text-foreground uppercase transition-colors hover:text-accent"
@@ -141,7 +140,7 @@ export default function Header({ solid = false }: { solid?: boolean }) {
             onClick={() => setMenuOpen(false)}
             className="mt-2 bg-accent px-8 py-3.5 text-[11px] font-semibold tracking-[0.22em] text-white uppercase transition-colors hover:bg-accent-hover"
           >
-            Quiero mi espacio
+            {content.ctaLabel}
           </Link>
         </nav>
       </div>

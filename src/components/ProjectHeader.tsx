@@ -2,21 +2,23 @@
 
 import { useEffect, useState } from "react";
 import ProjectLogo from "@/components/ProjectLogo";
-import type { ActiveProject } from "@/lib/projects";
+import { contactHref } from "@/lib/projects";
+import { sectionVars } from "@/lib/projects/theme";
+import type { HeaderSection, Project } from "@/lib/projects/types";
 
-const NAV = [
-  { label: "El proyecto", href: "#proyecto" },
-  { label: "Ubicación", href: "#ubicacion" },
-  { label: "Inversión", href: "#inversion" },
-  { label: "Plano", href: "#plano" },
-  { label: "Compra", href: "#compra" },
-] as const;
+export type NavItem = { label: string; href: string };
 
 export default function ProjectHeader({
   project,
+  nav,
+  header,
 }: {
-  project: Pick<ActiveProject, "slug" | "name">;
+  project: Pick<Project, "name" | "logo" | "contact">;
+  /** Solo las secciones visibles. */
+  nav: NavItem[];
+  header: HeaderSection;
 }) {
+  const { style } = header;
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -43,9 +45,19 @@ export default function ProjectHeader({
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
         solid
-          ? "bg-background/90 text-foreground shadow-[0_1px_0_rgba(38,22,31,0.08)] backdrop-blur-md"
-          : "bg-transparent text-background"
+          ? "bg-s-bg/90 text-s-fg shadow-[0_1px_0_color-mix(in_oklab,var(--s-fg)_8%,transparent)] backdrop-blur-md"
+          : "bg-transparent text-s-on-photo"
       }`}
+      style={sectionVars(
+        {
+          bg: style.solidBg,
+          fg: style.solidFg,
+          "on-photo": style.clearFg,
+          card: style.menuBg,
+          detail: style.menuFg,
+        },
+        { btn: style.ctaSolid, btn2: style.ctaClear },
+      )}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:h-20 sm:px-8 lg:px-10">
         <a
@@ -60,7 +72,7 @@ export default function ProjectHeader({
         </a>
 
         <nav className="hidden items-center gap-7 md:flex lg:gap-9">
-          {NAV.map((item) => (
+          {nav.map((item) => (
             <a
               key={item.href}
               href={item.href}
@@ -72,14 +84,14 @@ export default function ProjectHeader({
             </a>
           ))}
           <a
-            href="#visita"
+            href={contactHref(project, "visita")}
             className={`inline-flex h-10 items-center rounded-full px-5 text-[13px] font-medium transition-colors duration-300 ${
               solid
-                ? "bg-foreground text-background hover:bg-accent-hover"
-                : "bg-background text-foreground hover:bg-accent-soft"
+                ? "bg-s-btn text-s-btn-fg hover:bg-s-btn-hover hover:text-s-btn-hover-fg"
+                : "bg-s-btn2 text-s-btn2-fg hover:bg-s-btn2-hover hover:text-s-btn2-hover-fg"
             }`}
           >
-            Agendar visita
+            {header.ctaLabel}
           </a>
         </nav>
 
@@ -106,12 +118,12 @@ export default function ProjectHeader({
       </div>
 
       <div
-        className={`fixed inset-0 -z-10 flex flex-col bg-ink px-6 pt-28 pb-10 text-background transition-opacity duration-300 md:hidden ${
+        className={`fixed inset-0 -z-10 flex flex-col bg-s-card px-6 pt-28 pb-10 text-s-detail transition-opacity duration-300 md:hidden ${
           menuOpen ? "visible opacity-100" : "pointer-events-none invisible opacity-0"
         }`}
       >
         <nav className="flex flex-col gap-5">
-          {NAV.map((item) => (
+          {nav.map((item) => (
             <a
               key={item.href}
               href={item.href}
@@ -123,11 +135,11 @@ export default function ProjectHeader({
           ))}
         </nav>
         <a
-          href="#visita"
+          href={contactHref(project, "visita")}
           onClick={close}
-          className="mt-auto inline-flex h-12 items-center justify-center rounded-full bg-background text-sm font-medium text-foreground"
+          className="mt-auto inline-flex h-12 items-center justify-center rounded-full bg-s-btn2 text-sm font-medium text-s-btn2-fg"
         >
-          Agendar visita
+          {header.ctaLabel}
         </a>
       </div>
     </header>

@@ -5,17 +5,15 @@ import ProjectLogo from "@/components/ProjectLogo";
 import Reveal from "@/components/Reveal";
 import SectionHeading from "@/components/SectionHeading";
 import StatusBadge from "@/components/StatusBadge";
-import {
-  ACTIVE_PROJECTS,
-  formatUsd,
-  getFinancing,
-  getProjectStatus,
-  type ActiveProject,
-} from "@/lib/projects";
-import { SITE } from "@/lib/site";
+import { formatUsd, getFinancing, getProjectStatus } from "@/lib/projects";
+import { getProjects } from "@/lib/projects/fetch";
+import type { ForSaleContent } from "@/lib/home/types";
+import type { Project } from "@/lib/projects/types";
 
-export default function ActiveProjects() {
-  const single = ACTIVE_PROJECTS.length === 1;
+export default async function ActiveProjects({ content }: { content: ForSaleContent }) {
+  const projects = await getProjects();
+  if (!projects.length) return null;
+  const single = projects.length === 1;
 
   return (
     <section
@@ -27,14 +25,14 @@ export default function ActiveProjects() {
         <Reveal>
           <SectionHeading
             id="active-heading"
-            eyebrow="En venta ahora"
-            title={single ? "Proyecto en venta" : "Proyectos en venta"}
-            description="Espacios en los lugares que están definiendo el futuro de Cuzco. Elige el tuyo antes de que se agoten."
+            eyebrow={content.eyebrow}
+            title={single ? content.titleOne : content.titleMany}
+            description={content.description}
           />
         </Reveal>
 
         <ul className="mt-14 space-y-10 sm:mt-16 md:mt-20 md:space-y-14">
-          {ACTIVE_PROJECTS.map((project) => (
+          {projects.map((project) => (
             <li key={project.slug}>
               <Reveal>
                 <article className="group overflow-hidden rounded-2xl bg-stone lg:rounded-[1.75rem]">
@@ -44,8 +42,8 @@ export default function ActiveProjects() {
                     aria-label={`Ver ${project.name}`}
                   >
                     <Image
-                      src={project.heroImage}
-                      alt={project.imageAlt}
+                      src={project.hero.image.url}
+                      alt={project.hero.image.alt}
                       fill
                       sizes="(max-width: 1152px) 100vw, 1152px"
                       className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
@@ -88,11 +86,11 @@ export default function ActiveProjects() {
                     <dl className="grid grid-cols-3 border-y border-neutral-200 py-5 lg:col-span-4 lg:border-y-0 lg:py-0">
                       {[
                         {
-                          prefix: "desde",
-                          value: `${project.area.from} m²`,
-                          label: "Por espacio",
+                          prefix: content.areaPrefix,
+                          value: `${project.pricing.areaFrom} m²`,
+                          label: content.areaLabel,
                         },
-                        { value: "+ m²", label: "Amplíalo a tu medida" },
+                        { value: content.extraValue, label: content.extraLabel },
                         ...project.highlights,
                       ].map((item, index) => (
                         <div
@@ -103,7 +101,7 @@ export default function ActiveProjects() {
                             {item.label}
                           </dt>
                           <dd className="font-serif text-xl font-semibold whitespace-nowrap text-foreground sm:text-2xl">
-                            {"prefix" in item ? (
+                            {"prefix" in item && item.prefix ? (
                               <span className="mr-1 font-sans text-[11px] font-light text-neutral-500">
                                 {item.prefix}
                               </span>
@@ -119,15 +117,15 @@ export default function ActiveProjects() {
                         href={`/${project.slug}`}
                         className="inline-flex items-center justify-center bg-accent px-7 py-3.5 text-[11px] font-semibold tracking-[0.22em] text-white uppercase transition-colors hover:bg-accent-hover"
                       >
-                        Ver proyecto
+                        {content.viewLabel}
                       </Link>
                       <a
-                        href={SITE.bookingUrl}
+                        href={content.bookingUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center justify-center border border-foreground/80 px-7 py-3.5 text-[11px] font-semibold tracking-[0.22em] text-foreground uppercase transition-colors hover:bg-foreground hover:text-white"
                       >
-                        Agendar visita
+                        {content.bookingLabel}
                       </a>
                     </div>
                   </div>
@@ -141,7 +139,7 @@ export default function ActiveProjects() {
   );
 }
 
-function FinancingLine({ project }: { project: ActiveProject }) {
+function FinancingLine({ project }: { project: Project }) {
   const financing = getFinancing(project);
 
   return (

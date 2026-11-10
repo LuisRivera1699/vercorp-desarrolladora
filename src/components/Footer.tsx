@@ -1,21 +1,33 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ACTIVE_PROJECTS } from "@/lib/projects";
+import { telHref } from "@/lib/home/contact";
+import type { ContactContent, FooterContent } from "@/lib/home/types";
+import { getProjects } from "@/lib/projects/fetch";
 import { SITE } from "@/lib/site";
 
-const LINKS = [
-  ...ACTIVE_PROJECTS.map((project) => ({
-    label: project.name,
-    href: `/${project.slug}`,
-    external: false,
-  })),
+const FIXED_LINKS = [
   { label: "Proyectos entregados", href: "/#entregados", external: false },
   { label: "Vercorp", href: SITE.parentUrl, external: true },
   { label: "WeGrow", href: SITE.wegrowUrl, external: true },
   { label: "Términos y Condiciones", href: "#", external: false },
 ];
 
-export default function Footer() {
+export default async function Footer({
+  content,
+  contact,
+}: {
+  content: FooterContent;
+  contact: ContactContent;
+}) {
+  const links = [
+    ...(await getProjects()).map((project) => ({
+      label: project.name,
+      href: `/${project.slug}`,
+      external: false,
+    })),
+    ...FIXED_LINKS,
+  ];
+
   return (
     <footer className="relative overflow-hidden bg-ink text-white">
       <LotPattern />
@@ -28,16 +40,15 @@ export default function Footer() {
               className="inline-block transition-opacity hover:opacity-80"
             >
               <Image
-                src="/brand/vercorp-desarrolladora-logo.png"
-                alt="Vercorp Desarrolladora"
-                width={900}
-                height={291}
+                src={content.logo.url}
+                alt={content.logo.alt}
+                width={content.logo.width}
+                height={content.logo.height}
                 className="h-11 w-auto sm:h-12"
               />
             </Link>
             <p className="mt-5 max-w-xs text-sm leading-relaxed font-light text-white/55">
-              Habilitamos y lotizamos terrenos en Cuzco para que construyas tu
-              hogar, tu patrimonio y tu futuro.
+              {content.text}
             </p>
           </div>
 
@@ -46,21 +57,21 @@ export default function Footer() {
               Contacto
             </h3>
             <ul className="mt-5 space-y-3 text-sm font-light text-white/60">
-              <li>Cuzco, Perú</li>
+              <li>{contact.city}</li>
               <li>
                 <a
-                  href={`mailto:${SITE.email}`}
+                  href={`mailto:${contact.email}`}
                   className="transition-colors hover:text-accent"
                 >
-                  {SITE.email}
+                  {contact.email}
                 </a>
               </li>
               <li>
                 <a
-                  href={`tel:${SITE.phone}`}
+                  href={telHref(contact.phone)}
                   className="transition-colors hover:text-accent"
                 >
-                  {SITE.phoneLabel}
+                  {contact.phone}
                 </a>
               </li>
             </ul>
@@ -71,7 +82,7 @@ export default function Footer() {
               Enlaces
             </h3>
             <ul className="mt-5 space-y-3 text-sm font-light text-white/60">
-              {LINKS.map((link) => (
+              {links.map((link) => (
                 <li key={link.label}>
                   {link.external ? (
                     <a
@@ -115,7 +126,7 @@ export default function Footer() {
 
           <div className="mt-5 flex justify-center">
             <a
-              href={SITE.instagram}
+              href={content.instagram}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram de Vercorp"

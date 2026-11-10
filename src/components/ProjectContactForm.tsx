@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { type CSSProperties, FormEvent, useEffect, useRef, useState } from "react";
 import {
   FIELD_LIMITS,
   FormError,
@@ -15,7 +15,12 @@ import {
 } from "@/components/forms";
 import ProjectLogo from "@/components/ProjectLogo";
 import { submitLead } from "@/lib/leads";
-import { getAvailability, type ActiveProject } from "@/lib/projects";
+import { getAvailability } from "@/lib/projects";
+import { overlayGradient, resolveColor } from "@/lib/projects/constants";
+import { sectionVars } from "@/lib/projects/theme";
+import type { ButtonColors, Palette, Project } from "@/lib/projects/types";
+import { useSiteSettings } from "@/components/SiteSettings";
+import { telHref } from "@/lib/home/contact";
 import { SITE } from "@/lib/site";
 
 type ProjectIntent = "visita" | "compra";
@@ -25,40 +30,30 @@ const HASH_INTENT: Record<string, ProjectIntent> = {
   "#comprar": "compra",
 };
 
-const TABS: { id: ProjectIntent; label: string }[] = [
-  { id: "visita", label: "Agendar visita" },
-  { id: "compra", label: "Quiero comprar" },
-];
+/**
+ * Los componentes de formulario compartidos con el home pintan el botón con
+ * `--accent`; aquí se redefine con los colores del botón de esta sección.
+ * Van resueltos a hex porque `--accent: var(--accent)` sería circular.
+ */
+function formButtonVars(button: ButtonColors, palette: Palette) {
+  return {
+    "--accent": resolveColor(button.bg, palette),
+    "--accent-hover": resolveColor(button.hoverBg, palette),
+    "--btn-fg": resolveColor(button.fg, palette),
+    "--btn-hover-fg": resolveColor(button.hoverFg, palette),
+  } as CSSProperties;
+}
 
 function todayInLima() {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Lima" }).format(new Date());
 }
 
-const COPY: Record<
-  ProjectIntent,
-  { title: string; description: string; submit: string; success: string }
-> = {
-  visita: {
-    title: "Agenda tu cita",
-    description:
-      "Elige el día que prefieras y un asesor te confirmará el horario para recorrer el terreno contigo.",
-    submit: "Agendar",
-    success: "¡Nos vemos en el terreno!",
-  },
-  compra: {
-    title: "Separa tu espacio",
-    description:
-      "Cuéntanos qué espacio te interesa. Te confirmamos disponibilidad, precio y los pasos para hacerlo tuyo.",
-    submit: "Quiero este espacio",
-    success: "¡Espacio en camino!",
-  },
-};
-
 export default function ProjectContactForm({
   project,
 }: {
-  project: ActiveProject;
+  project: Project;
 }) {
+  const settings = useSiteSettings();
   const sectionRef = useRef<HTMLElement>(null);
   const [intent, setIntent] = useState<ProjectIntent>("visita");
   const [accepted, setAccepted] = useState(false);
@@ -120,25 +115,41 @@ export default function ProjectContactForm({
     setAttempted(false);
   };
 
-  const copy = COPY[intent];
+  const { contact } = project;
+  const { style } = contact;
+  const tabs: { id: ProjectIntent; label: string }[] = [
+    { id: "visita", label: contact.visit.tab },
+    { id: "compra", label: contact.buy.tab },
+  ];
+  const copy = intent === "compra" ? contact.buy : contact.visit;
   const buying = intent === "compra";
 
   return (
     <section
       ref={sectionRef}
       id="contacto-proyecto"
-      className="grid scroll-mt-16 bg-background sm:scroll-mt-20 lg:grid-cols-2"
+      className="grid scroll-mt-16 bg-s-bg text-s-fg sm:scroll-mt-20 lg:grid-cols-2"
+      style={{
+        ...sectionVars(
+          { bg: style.bg, fg: style.fg, card: style.tabsBg, "on-photo": style.photoFg },
+          { btn2: style.tabActive },
+        ),
+        ...formButtonVars(style.button, project.palette),
+      }}
       aria-labelledby="project-contact-heading"
     >
-      <div className="relative isolate flex min-h-[26rem] flex-col justify-between overflow-hidden px-5 py-10 text-background sm:px-10 sm:py-12 lg:min-h-[44rem] lg:px-14 lg:py-16">
+      <div className="relative isolate flex min-h-[26rem] flex-col justify-between overflow-hidden px-5 py-10 text-s-on-photo sm:px-10 sm:py-12 lg:min-h-[44rem] lg:px-14 lg:py-16">
         <Image
-          src={project.contact.image.src}
-          alt={project.contact.image.alt}
+          src={contact.image.url}
+          alt={contact.image.alt}
           fill
           sizes="(max-width: 1024px) 100vw, 50vw"
           className="-z-10 object-cover"
         />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink/90 via-ink/35 to-ink/25" />
+        <div
+          className="absolute inset-0 -z-10"
+          style={{ backgroundImage: overlayGradient(style.overlay) }}
+        />
 
         <ProjectLogo project={project} className="h-9 w-auto sm:h-11" />
 
@@ -149,24 +160,24 @@ export default function ProjectContactForm({
           >
             Conversemos
           </h2>
-          <p className="mt-4 text-[15px] font-light text-background/85 sm:text-base">
-            {project.contact.blurb}
+          <p className="mt-4 text-[15px] font-light text-s-on-photo/85 sm:text-base">
+            {contact.blurb}
           </p>
-          <ul className="mt-8 space-y-1.5 text-sm font-light text-background/70">
+          <ul className="mt-8 space-y-1.5 text-sm font-light text-s-on-photo/70">
             <li>
               <a
-                href={`tel:${SITE.phone}`}
-                className="transition-colors hover:text-background"
+                href={telHref(settings.phone)}
+                className="transition-colors hover:text-s-on-photo"
               >
-                {SITE.phoneLabel}
+                {settings.phone}
               </a>
             </li>
             <li>
               <a
-                href={`mailto:${SITE.email}`}
-                className="transition-colors hover:text-background"
+                href={`mailto:${settings.email}`}
+                className="transition-colors hover:text-s-on-photo"
               >
-                {SITE.email}
+                {settings.email}
               </a>
             </li>
             <li>
@@ -174,7 +185,7 @@ export default function ProjectContactForm({
                 href={SITE.parentUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition-colors hover:text-background"
+                className="transition-colors hover:text-s-on-photo"
               >
                 {SITE.parentUrl.replace("https://", "www.")}
               </a>
@@ -204,11 +215,11 @@ export default function ProjectContactForm({
           ) : (
             <>
               <div
-                className="flex max-w-sm rounded-full bg-stone p-1"
+                className="flex max-w-sm rounded-full bg-s-card p-1"
                 role="tablist"
                 aria-label="Tipo de solicitud"
               >
-                {TABS.map((tab) => (
+                {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     type="button"
@@ -217,8 +228,8 @@ export default function ProjectContactForm({
                     onClick={() => selectIntent(tab.id)}
                     className={`flex-1 rounded-full px-3 py-2.5 text-[13px] whitespace-nowrap transition-all duration-300 sm:px-4 ${
                       intent === tab.id
-                        ? "bg-foreground font-medium text-background"
-                        : "text-foreground/60 hover:text-foreground"
+                        ? "bg-s-btn2 font-medium text-s-btn2-fg"
+                        : "text-s-fg/60 hover:text-s-fg"
                     }`}
                   >
                     {tab.label}
@@ -226,10 +237,10 @@ export default function ProjectContactForm({
                 ))}
               </div>
 
-              <h3 className="mt-9 text-3xl font-extralight tracking-[-0.01em] text-foreground sm:text-4xl">
+              <h3 className="mt-9 text-3xl font-extralight tracking-[-0.01em] text-s-fg sm:text-4xl">
                 {copy.title}
               </h3>
-              <p className="mt-3 text-[15px] leading-relaxed font-light text-foreground/65">
+              <p className="mt-3 text-[15px] leading-relaxed font-light text-s-fg/65">
                 {copy.description}
               </p>
 
@@ -288,7 +299,7 @@ export default function ProjectContactForm({
                       >
                         <option value="">Espacio de interés (opcional)</option>
                         <option value="mas-metros">
-                          Quiero más de {project.area.from} m² (precio especial)
+                          Quiero más de {project.pricing.areaFrom} m² (precio especial)
                         </option>
                         {getAvailability(project).availableSpaces.map(
                           (space) => (

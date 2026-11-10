@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "images.unsplash.com",
+        hostname: "firebasestorage.googleapis.com",
+        pathname: "/v0/b/vercorp-ed9bd.firebasestorage.app/o/**",
       },
     ],
   },

@@ -1,6 +1,7 @@
 "use client";
 
-import { SITE, whatsappLink } from "@/lib/site";
+import { useSiteSettings } from "@/components/SiteSettings";
+import { whatsappLink } from "@/lib/home/contact";
 
 export const inputClass =
   "h-12 w-full rounded-md border border-neutral-300 bg-white px-4 text-sm text-foreground placeholder:text-neutral-400 outline-none transition-colors focus:border-accent sm:h-[3.25rem]";
@@ -23,11 +24,12 @@ export function isBot(data: FormData) {
 }
 
 export function FormError({ whatsappMessage }: { whatsappMessage: string }) {
+  const { phone } = useSiteSettings();
   return (
     <p role="alert" className="mt-5 text-center text-[13px] leading-relaxed text-red-600">
       No pudimos enviar tu consulta. Inténtalo de nuevo o{" "}
       <a
-        href={whatsappLink(whatsappMessage)}
+        href={whatsappLink(phone, whatsappMessage)}
         target="_blank"
         rel="noopener noreferrer"
         className="font-medium text-foreground underline underline-offset-2 hover:text-accent"
@@ -42,7 +44,7 @@ export function FormError({ whatsappMessage }: { whatsappMessage: string }) {
 type ButtonVariant = "default" | "pill";
 
 const buttonBase =
-  "inline-flex h-12 items-center justify-center gap-2.5 bg-accent px-8 text-white transition-colors duration-300 hover:bg-accent-hover sm:h-[3.25rem]";
+  "inline-flex h-12 items-center justify-center gap-2.5 bg-accent px-8 text-[var(--btn-fg,#fff)] transition-colors duration-300 hover:bg-accent-hover hover:text-[var(--btn-hover-fg,#fff)] sm:h-[3.25rem]";
 
 function buttonShape(variant: ButtonVariant) {
   return variant === "pill"
@@ -137,6 +139,7 @@ export function SuccessMessage({
   bookingText?: string;
   variant?: ButtonVariant;
 }) {
+  const { bookingUrl } = useSiteSettings();
   return (
     <div
       className="animate-hero-in mx-auto mt-10 flex max-w-md flex-col items-center text-center sm:mt-12"
@@ -164,7 +167,7 @@ export function SuccessMessage({
         </p>
         <p className="mt-3 text-sm leading-relaxed text-neutral-500">{bookingText}</p>
         <a
-          href={SITE.bookingUrl}
+          href={bookingUrl}
           target="_blank"
           rel="noopener noreferrer"
           className={`${buttonBase} mt-5 ${buttonShape(variant)}`}

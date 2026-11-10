@@ -1,19 +1,32 @@
-import { whatsappLink } from "@/lib/site";
+"use client";
+
+import { useSiteSettings } from "@/components/SiteSettings";
+import { whatsappLink } from "@/lib/home/contact";
+import { sectionVars } from "@/lib/projects/theme";
+import type { ButtonColors } from "@/lib/projects/types";
 
 export default function WhatsAppButton({
-  message = "Hola, quiero información sobre los espacios de Vercorp Desarrolladora.",
-  hoverClassName = "hover:bg-accent",
+  message,
+  colors,
 }: {
+  /** Sin mensaje propio usa el que se edita en Contacto. */
   message?: string;
-  hoverClassName?: string;
+  /** Colores propios de un proyecto; sin ellos usa los del sitio. */
+  colors?: ButtonColors;
 }) {
+  const settings = useSiteSettings();
+  const palette = colors
+    ? "bg-s-btn text-s-btn-fg hover:bg-s-btn-hover hover:text-s-btn-hover-fg"
+    : "bg-ink text-white hover:bg-accent";
+
   return (
     <a
-      href={whatsappLink(message)}
+      href={whatsappLink(settings.phone, message ?? settings.whatsappMessage)}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Escríbenos por WhatsApp"
-      className={`group fixed right-5 bottom-5 z-40 flex h-13 w-13 items-center justify-center rounded-full bg-ink text-white shadow-[0_10px_30px_rgba(0,0,0,0.25)] ring-1 ring-white/25 transition-all duration-300 hover:-translate-y-0.5 sm:right-7 sm:bottom-7 sm:h-14 sm:w-14 ${hoverClassName}`}
+      className={`group fixed right-5 bottom-5 z-40 flex h-13 w-13 items-center justify-center rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.25)] ring-1 ring-white/25 transition-all duration-300 hover:-translate-y-0.5 sm:right-7 sm:bottom-7 sm:h-14 sm:w-14 ${palette}`}
+      style={colors ? sectionVars({}, { btn: colors }) : undefined}
     >
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
         <path

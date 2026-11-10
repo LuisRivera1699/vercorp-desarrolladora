@@ -1,4 +1,5 @@
-import { getAvailability, type ActiveProject } from "@/lib/projects";
+import { getAvailability } from "@/lib/projects";
+import type { Project } from "@/lib/projects/types";
 
 const PROGRESS_BAR_RATIO = 0.5;
 
@@ -7,7 +8,7 @@ export default function Availability({
   tone = "light",
   className = "",
 }: {
-  project: ActiveProject;
+  project: Pick<Project, "lots">;
   tone?: "light" | "dark";
   className?: string;
 }) {

@@ -9,22 +9,28 @@ import Inquiry from "@/components/Inquiry";
 import SoldProjects from "@/components/SoldProjects";
 import Stats from "@/components/Stats";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import { getHome } from "@/lib/home/fetch";
+import { deliveredStats } from "@/lib/home/stats";
+import { getProjects } from "@/lib/projects/fetch";
 
-export default function Home() {
+export default async function Home() {
+  const [home, projects] = await Promise.all([getHome(), getProjects()]);
+  const stats = deliveredStats(home.delivered.items);
+
   return (
     <>
-      <Header />
+      <Header content={home.header} />
       <main>
-        <Hero />
-        <Stats />
-        <HowItWorks />
-        <ActiveProjects />
-        <Benefits />
-        <GrowBand />
-        <SoldProjects />
-        <Inquiry />
+        <Hero content={home.hero} />
+        <Stats metrics={home.hero.metrics} stats={stats} />
+        <HowItWorks content={home.steps} />
+        <ActiveProjects content={home.forSale} />
+        <Benefits content={home.why} stats={stats} />
+        <GrowBand content={home.grow} />
+        <SoldProjects content={home.delivered} stats={stats} />
+        <Inquiry content={home.contact} projects={projects} />
       </main>
-      <Footer />
+      <Footer content={home.footer} contact={home.contact} />
       <WhatsAppButton />
     </>
   );

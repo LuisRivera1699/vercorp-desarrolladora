@@ -1,59 +1,61 @@
 import Image from "next/image";
+import Lines from "@/components/Lines";
 import LotPlan from "@/components/LotPlan";
+import type { HeroContent } from "@/lib/home/types";
 
-export default function Hero() {
+export default function Hero({ content }: { content: HeroContent }) {
   return (
     <section
       className="relative h-[100dvh] min-h-[600px] w-full overflow-hidden bg-ink"
       aria-label="Presentación Vercorp Desarrolladora"
     >
-      <Image
-        src="/photos/valle-andino.png"
-        alt="Valle andino de Cuzco con parcelas de cultivo y montañas"
-        fill
-        priority
-        sizes="100vw"
-        className="object-cover object-[50%_60%]"
-      />
+      {content.image.url ? (
+        <Image
+          src={content.image.url}
+          alt={content.image.alt}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[50%_60%]"
+        />
+      ) : null}
       <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/50" />
 
-      <div
-        className="hero-plane pointer-events-none absolute inset-x-[-40%] bottom-[-4%] h-[50%] sm:inset-x-[-12%] md:h-[60%]"
-        aria-hidden
-      >
-        <LotPlan
-          preserveAspectRatio="xMidYMax slice"
-          className="h-full w-full"
-        />
-      </div>
+      {content.showPlan ? (
+        <div
+          className="hero-plane pointer-events-none absolute inset-x-[-40%] bottom-[-4%] h-[50%] sm:inset-x-[-12%] md:h-[60%]"
+          aria-hidden
+        >
+          <LotPlan
+            preserveAspectRatio="xMidYMax slice"
+            className="h-full w-full"
+          />
+        </div>
+      ) : null}
 
       <div className="relative z-10 flex h-full flex-col items-center px-6 pt-[22vh] text-center text-white sm:pt-[20vh]">
         <div className="animate-hero-in flex max-w-4xl flex-col items-center">
           <p className="text-[10px] font-medium tracking-[0.36em] text-white/75 uppercase sm:text-[11px]">
-            Habilitaciones urbanas en Cuzco
+            {content.eyebrow}
           </p>
           <h1 className="mt-5 font-serif text-[2.6rem] leading-[1.04] font-semibold tracking-wide text-white uppercase sm:text-6xl md:text-7xl lg:text-[5.4rem]">
-            Tu lugar para
-            <br />
-            crecer en Cuzco
+            <Lines text={content.title} />
           </h1>
           <p className="mt-6 max-w-xl text-sm leading-relaxed font-light text-white/85 sm:text-base md:text-[1.05rem] md:leading-8">
-            Transformamos grandes terrenos en espacios listos para ser tuyos, en
-            las zonas con mayor proyección del Cuzco. Tú pones la idea;
-            nosotros, el lugar.
+            {content.text}
           </p>
           <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
             <a
               href="#en-venta"
               className="inline-flex items-center justify-center bg-accent px-8 py-3.5 text-[11px] font-semibold tracking-[0.22em] text-white uppercase transition-colors duration-300 hover:bg-accent-hover sm:px-10"
             >
-              Ver espacios disponibles
+              {content.primaryLabel}
             </a>
             <a
               href="#entregados"
               className="inline-flex items-center justify-center border border-white/80 px-8 py-3.5 text-[11px] font-semibold tracking-[0.22em] text-white uppercase transition-all duration-300 hover:bg-white hover:text-foreground sm:px-10"
             >
-              Condominios entregados
+              {content.secondaryLabel}
             </a>
           </div>
         </div>

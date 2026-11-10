@@ -1,5 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { SiteSettingsProvider } from "@/components/SiteSettings";
+import { plainPhone } from "@/lib/home/contact";
+import { getSiteSettings } from "@/lib/home/fetch";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
@@ -94,7 +97,8 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const settings = await getSiteSettings();
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "RealEstateAgent",
@@ -107,9 +111,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     url: SITE.url,
     logo: `${SITE.url}/brand/vercorp-desarrolladora-logo-dark.png`,
     image: `${SITE.url}${ogImage.url}`,
-    email: SITE.email,
-    telephone: SITE.phone,
-    sameAs: [SITE.instagram],
+    email: settings.email,
+    telephone: plainPhone(settings.phone),
+    sameAs: [settings.instagram],
     address: {
       "@type": "PostalAddress",
       addressLocality: "Cuzco",
@@ -128,7 +132,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {children}
+        <SiteSettingsProvider settings={settings}>{children}</SiteSettingsProvider>
       </body>
     </html>
   );

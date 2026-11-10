@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
-import { ACTIVE_PROJECTS } from "@/lib/projects";
+import { getProjects } from "@/lib/projects/fetch";
 import { SITE } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     {
       url: SITE.url,
@@ -10,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 1,
     },
-    ...ACTIVE_PROJECTS.map((project) => ({
+    ...(await getProjects()).map((project) => ({
       url: `${SITE.url}/${project.slug}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
